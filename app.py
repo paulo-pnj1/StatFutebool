@@ -457,26 +457,80 @@ class Analisador:
         except Exception as e: st.error(f"Erro email: {e}")
 
     def gerar_pdf(self, currency_key='EUR'):
+        """Gera relatório PDF com tratamento de caracteres Unicode"""
         c = CURRENCIES.get(currency_key, CURRENCIES['EUR'])
-        pdf = FPDF(); pdf.add_page(); pdf.set_font("Arial","B",size=12)
-        pdf.cell(200,9,f"Relatorio Bet Analyzer ({c['name']})",ln=1,align='C'); pdf.ln(5)
-        pdf.set_font("Arial",size=9)
-        pdf.cell(200,6,f"Total de apostas: {len(self.historico)}",ln=1); pdf.ln(3)
-        MMAP = {"btts":"BTTS","over25":"Over 2.5","over15":"Over 1.5","under35":"Under 3.5","under25":"Under 2.5","second_half_more":"2o Tempo+"}
+        pdf = FPDF()
+        pdf.add_page()
+        
+        # Função para limpar texto (remover emojis e caracteres especiais)
+        def clean_text(text):
+            if not isinstance(text, str):
+                text = str(text)
+            # Substituir emojis comuns
+            text = text.replace('🏠', 'Home: ')
+            text = text.replace('🚩', 'Away: ')
+            text = text.replace('⚽', '[F] ')
+            text = text.replace('🎯', '[T] ')
+            text = text.replace('🛡️', '[S] ')
+            text = text.replace('⏱️', '[T] ')
+            text = text.replace('⚡', '[A] ')
+            text = text.replace('⚖️', '[B] ')
+            text = text.replace('🤝', '[H] ')
+            text = text.replace('✅', '[OK] ')
+            text = text.replace('⚠️', '[!] ')
+            text = text.replace('🔒', '[L] ')
+            text = text.replace('📊', '[G] ')
+            text = text.replace('·', '-')
+            text = text.replace('→', '->')
+            # Remover outros caracteres problemáticos
+            text = ''.join(char for char in text if ord(char) < 256 or char in '€$R$Kz')
+            return text.encode('latin-1', errors='ignore').decode('latin-1')
+        
+        # Título
+        pdf.set_font("Arial", "B", size=12)
+        titulo = clean_text(f"Relatorio Bet Analyzer ({c['name']})")
+        pdf.cell(200, 9, titulo, ln=1, align='C')
+        pdf.ln(5)
+        
+        # Total de apostas
+        pdf.set_font("Arial", size=9)
+        total_apostas = clean_text(f"Total de apostas: {len(self.historico)}")
+        pdf.cell(200, 6, total_apostas, ln=1)
+        pdf.ln(3)
+        
+        # Mapeamento de mercados
+        MMAP = {"btts":"BTTS","over25":"Over 2.5","over15":"Over 1.5",
+                "under35":"Under 3.5","under25":"Under 2.5","second_half_more":"2o Tempo+"}
+        
+        # Últimas 20 apostas
         for a in list(reversed(self.historico))[-20:]:
-            mkey   = a.get('mercado_escolhido','')
+            mkey = a.get('mercado_escolhido', '')
             mlabel = MMAP.get(mkey, mkey.upper())
-            odd_ap = a.get('odd_apostada',0)
-            ev     = a.get('ev',0)
-            stake  = a.get('stake',0)
-            prob_m = a.get('probs',{}).get(mkey, a.get('prob_btts',0))
-            pdf.set_font("Arial","B",size=9)
-            pdf.cell(200,6,f"{a['home']} vs {a['away']}",ln=1)
-            pdf.set_font("Arial",size=8)
+            odd_ap = a.get('odd_apostada', 0)
+            ev = a.get('ev', 0)
+            stake = a.get('stake', 0)
+            prob_m = a.get('probs', {}).get(mkey, a.get('prob_btts', 0))
+            
+            # Times (limpos)
+            home_clean = clean_text(a['home'])
+            away_clean = clean_text(a['away'])
+            
+            pdf.set_font("Arial", "B", size=9)
+            match_line = clean_text(f"{home_clean} vs {away_clean}")
+            pdf.cell(200, 6, match_line, ln=1)
+            
+            pdf.set_font("Arial", size=8)
             stake_str = f"{c['symbol']}{stake:.2f}" if stake else "-"
-            pdf.cell(200,5,f"  {a['data']}  |  {mlabel}  |  Prob: {prob_m}%  |  Odd: {odd_ap:.2f}  |  Stake: {stake_str}  |  EV: {ev:+.3f}",ln=1)
+            data_clean = clean_text(a['data'])
+            
+            # Linha de detalhes
+            line = f"  {data_clean}  |  {mlabel}  |  Prob: {prob_m:.0f}%  |  Odd: {odd_ap:.2f}  |  Stake: {stake_str}  |  EV: {ev:+.3f}"
+            line_clean = clean_text(line)
+            pdf.cell(200, 5, line_clean, ln=1)
             pdf.ln(2)
-        return pdf.output(dest='S')
+        
+        # Retornar PDF como bytes
+        return pdf.output(dest='S').encode('latin-1', errors='ignore')
 
 # ── RENDER HELPERS ────────────────────────────────────────────────────────────
 def render_metric_grid(analise, markets):
@@ -920,7 +974,12 @@ def main():
 
                 st.markdown('<hr class="divider">', unsafe_allow_html=True)
                 pdf_b = an.gerar_pdf(curr)
-                st.download_button("⬇️ Exportar PDF", data=pdf_b, file_name="relatorio_bets.pdf", mime="application/pdf")
+                st.download_button(
+                    "⬇️ Exportar PDF", 
+                    data=pdf_b, 
+                    file_name="relatorio_bets.pdf", 
+                    mime="application/pdf"
+                )
         else:
             st.info("Histórico vazio. Analise uma partida para popular.")
 
