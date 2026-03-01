@@ -13,7 +13,7 @@ from fpdf import FPDF
 load_dotenv()
 
 st.set_page_config(
-    page_title="⚽ Bet Analyzer",
+    page_title="Bet Analyzer",
     layout="wide",
     page_icon="⚽",
     initial_sidebar_state="collapsed"
@@ -27,162 +27,170 @@ st.markdown("""
 
 html, body, .stApp {
     font-family: 'Inter', sans-serif;
-    background: #f8fafc;
-    color: #1e293b;
+    background: #000000 !important;
+    color: #ffffff;
     -webkit-font-smoothing: antialiased;
 }
 
+/* Remover Manage App e outros elementos */
 #MainMenu, footer, header, .stDeployButton,
-[data-testid="collapsedControl"] { display: none !important; }
+[data-testid="collapsedControl"], 
+[data-testid="stStatusWidget"],
+.stActionButton,
+div[data-testid="stDecoration"] {
+    display: none !important;
+}
 
-.block-container { padding: 0.75rem 0.75rem 5rem !important; max-width: 100% !important; }
+.block-container { 
+    padding: 0.75rem 0.75rem 5rem !important; 
+    max-width: 100% !important; 
+    background-color: #000000;
+}
 
-/* Removendo estilos da sidebar */
-
-/* TOP BAR */
+/* TOP BAR - versão escura */
 .top-bar {
     position: sticky; top: 0; z-index: 100;
     display: flex; align-items: center; gap: 0.6rem;
     padding: 0.65rem 1rem;
-    background: rgba(255,255,255,0.97);
+    background: rgba(0,0,0,0.95);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #333333;
     margin: -0.75rem -0.75rem 0.9rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 4px rgba(255,255,255,0.06);
 }
-.tb-icon { font-size: 1.25rem; flex-shrink: 0; }
-.tb-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; letter-spacing:-0.02em; flex:1; }
-.tb-sub { font-size: 0.58rem; color: #94a3b8; font-family:'JetBrains Mono',monospace; }
+.tb-icon { font-size: 1.25rem; flex-shrink: 0; color: #ffffff; }
+.tb-title { font-size: 0.95rem; font-weight: 700; color: #ffffff; letter-spacing:-0.02em; flex:1; }
+.tb-sub { font-size: 0.58rem; color: #888888; font-family:'JetBrains Mono',monospace; }
 .status-dots { display:flex; gap:0.3rem; align-items:center; flex-shrink:0; }
 .dot { width:7px; height:7px; border-radius:50%; }
 .dot-g { background:#22c55e; box-shadow:0 0 6px #22c55e99; }
 .dot-y { background:#f59e0b; }
 .dot-r { background:#ef4444; }
 
-/* CURRENCY CHIP */
+/* CURRENCY CHIP - versão escura */
 .currency-chip {
     display: inline-flex; align-items: center; gap: 0.3rem;
     padding: 0.22rem 0.6rem;
-    background: #eff6ff; border: 1px solid #bfdbfe;
+    background: #1a1a1a; border: 1px solid #333333;
     border-radius: 999px; font-size: 0.68rem; font-weight: 700;
-    color: #1d4ed8; font-family: 'JetBrains Mono', monospace;
+    color: #60a5fa; font-family: 'JetBrains Mono', monospace;
 }
 
 /* LABELS */
 .sec-label {
     font-size: 0.59rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.12em; color: #94a3b8;
+    letter-spacing: 0.12em; color: #888888;
     margin-bottom: 0.45rem; margin-top: 0.1rem; display: block;
 }
 
-/* MATCH BANNER */
+/* MATCH BANNER - versão escura */
 .match-banner {
-    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
-    border: 1px solid #bfdbfe; border-radius: 12px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #111111 100%);
+    border: 1px solid #333333; border-radius: 12px;
     padding: 0.85rem 1rem; margin-bottom: 0.8rem;
     display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
 }
 .match-teams { flex:1; min-width:0; }
-.match-teams .mh { font-size:0.92rem; font-weight:700; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.match-teams .mv { font-size:0.58rem; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin:0.07rem 0; }
-.match-teams .ma { font-size:0.88rem; font-weight:600; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.match-date { font-family:'JetBrains Mono',monospace; font-size:0.63rem; color:#64748b; background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:0.28rem 0.55rem; white-space:nowrap; flex-shrink:0; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+.match-teams .mh { font-size:0.92rem; font-weight:700; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.match-teams .mv { font-size:0.58rem; color:#888888; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin:0.07rem 0; }
+.match-teams .ma { font-size:0.88rem; font-weight:600; color:#cccccc; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.match-date { font-family:'JetBrains Mono',monospace; font-size:0.63rem; color:#888888; background:#111111; border:1px solid #333333; border-radius:6px; padding:0.28rem 0.55rem; white-space:nowrap; flex-shrink:0; box-shadow:0 1px 2px rgba(255,255,255,0.04); }
 
-/* METRIC GRID */
+/* METRIC GRID - versão escura */
 .metric-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.45rem; margin-bottom:0.75rem; }
 @media(max-width:480px){ .metric-grid{ grid-template-columns:repeat(2,1fr); } }
 .metric-card {
-    background:#fff; border:1px solid #e2e8f0; border-radius:10px;
+    background:#111111; border:1px solid #333333; border-radius:10px;
     padding:0.62rem 0.5rem; text-align:center; position:relative; overflow:hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(255,255,255,0.05);
 }
 .metric-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:10px 10px 0 0; }
 .mc-g::before { background: linear-gradient(90deg,#16a34a,#4ade80); }
 .mc-y::before { background: linear-gradient(90deg,#d97706,#fbbf24); }
 .mc-r::before { background: linear-gradient(90deg,#dc2626,#f87171); }
 .metric-card .mv { font-family:'JetBrains Mono',monospace; font-size:1.45rem; font-weight:700; line-height:1; letter-spacing:-0.03em; }
-.mc-g .mv { color:#16a34a; } .mc-y .mv { color:#d97706; } .mc-r .mv { color:#dc2626; }
-.metric-card .ml { font-size:0.57rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.07em; margin-top:0.17rem; }
-.metric-card .mo { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#cbd5e1; margin-top:0.1rem; }
+.mc-g .mv { color:#4ade80; } .mc-y .mv { color:#fbbf24; } .mc-r .mv { color:#f87171; }
+.metric-card .ml { font-size:0.57rem; font-weight:600; color:#888888; text-transform:uppercase; letter-spacing:0.07em; margin-top:0.17rem; }
+.metric-card .mo { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#666666; margin-top:0.1rem; }
 
-/* PROB BARS */
-.pbar-wrap { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0.68rem 0.85rem; margin-bottom:0.75rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+/* PROB BARS - versão escura */
+.pbar-wrap { background:#111111; border:1px solid #333333; border-radius:10px; padding:0.68rem 0.85rem; margin-bottom:0.75rem; box-shadow:0 1px 3px rgba(255,255,255,0.04); }
 .pbar-row { display:flex; align-items:center; gap:0.52rem; margin-bottom:0.5rem; }
 .pbar-row:last-child { margin-bottom:0; }
-.pbar-lbl { font-size:0.63rem; color:#64748b; width:72px; flex-shrink:0; font-weight:500; }
-.pbar-track { flex:1; height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden; }
+.pbar-lbl { font-size:0.63rem; color:#888888; width:72px; flex-shrink:0; font-weight:500; }
+.pbar-track { flex:1; height:6px; background:#1a1a1a; border-radius:3px; overflow:hidden; }
 .pbar-fill { height:100%; border-radius:3px; }
 .pb-g { background: linear-gradient(90deg,#16a34a,#4ade80); }
 .pb-y { background: linear-gradient(90deg,#d97706,#fbbf24); }
 .pb-r { background: linear-gradient(90deg,#dc2626,#f87171); }
-.pbar-pct { font-family:'JetBrains Mono',monospace; font-size:0.63rem; color:#475569; width:30px; text-align:right; flex-shrink:0; }
+.pbar-pct { font-family:'JetBrains Mono',monospace; font-size:0.63rem; color:#cccccc; width:30px; text-align:right; flex-shrink:0; }
 
-/* ANALYSIS CARD */
-.analysis-card { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0.68rem 0.85rem; margin-bottom:0.75rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
-.aline { display:flex; gap:0.48rem; align-items:flex-start; padding:0.32rem 0; border-bottom:1px solid #f8fafc; font-size:0.7rem; color:#475569; line-height:1.45; }
+/* ANALYSIS CARD - versão escura */
+.analysis-card { background:#111111; border:1px solid #333333; border-radius:10px; padding:0.68rem 0.85rem; margin-bottom:0.75rem; box-shadow:0 1px 3px rgba(255,255,255,0.04); }
+.aline { display:flex; gap:0.48rem; align-items:flex-start; padding:0.32rem 0; border-bottom:1px solid #222222; font-size:0.7rem; color:#cccccc; line-height:1.45; }
 .aline:last-child { border-bottom:none; padding-bottom:0; }
 .aline .ai { flex-shrink:0; font-size:0.75rem; line-height:1.45; }
 
-/* H2H */
+/* H2H - versão escura */
 .h2h-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.45rem; margin-bottom:0.75rem; }
-.h2h-tile { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0.6rem; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
-.h2h-tile .hv { font-family:'JetBrains Mono',monospace; font-size:1.18rem; font-weight:700; color:#2563eb; }
-.h2h-tile .hl { font-size:0.58rem; color:#94a3b8; text-transform:uppercase; letter-spacing:0.06em; margin-top:0.1rem; }
+.h2h-tile { background:#111111; border:1px solid #333333; border-radius:10px; padding:0.6rem; text-align:center; box-shadow:0 1px 3px rgba(255,255,255,0.04); }
+.h2h-tile .hv { font-family:'JetBrains Mono',monospace; font-size:1.18rem; font-weight:700; color:#60a5fa; }
+.h2h-tile .hl { font-size:0.58rem; color:#888888; text-transform:uppercase; letter-spacing:0.06em; margin-top:0.1rem; }
 
-/* PILLS */
+/* PILLS - versão escura */
 .pill-wrap { display:flex; flex-wrap:wrap; gap:0.32rem; margin-bottom:0.75rem; }
 .pill { display:inline-flex; align-items:center; gap:0.28rem; padding:0.28rem 0.62rem; border-radius:999px; font-size:0.64rem; font-weight:600; line-height:1; }
-.pill-g { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
-.pill-y { background:#fef9c3; color:#a16207; border:1px solid #fde68a; }
-.pill-s { background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0; }
+.pill-g { background:#14532d; color:#86efac; border:1px solid #166534; }
+.pill-y { background:#713f12; color:#fde047; border:1px solid #854d0e; }
+.pill-s { background:#1a1a1a; color:#888888; border:1px solid #333333; }
 
-/* TEAM CARD */
-.team-card { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0.8rem; margin-bottom:0.65rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+/* TEAM CARD - versão escura */
+.team-card { background:#111111; border:1px solid #333333; border-radius:10px; padding:0.8rem; margin-bottom:0.65rem; box-shadow:0 1px 3px rgba(255,255,255,0.04); }
 .tc-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.62rem; }
-.tc-name { font-size:0.82rem; font-weight:700; color:#0f172a; }
+.tc-name { font-size:0.82rem; font-weight:700; color:#ffffff; }
 .tc-badge { font-size:0.55rem; font-weight:700; padding:0.18rem 0.5rem; border-radius:999px; text-transform:uppercase; letter-spacing:0.07em; }
-.tb-of { background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; }
-.tb-df { background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0; }
-.tb-eq { background:#f5f3ff; color:#7c3aed; border:1px solid #ddd6fe; }
-.tc-stats { display:flex; gap:0.5rem; margin-top:0.52rem; padding-top:0.44rem; border-top:1px solid #f1f5f9; flex-wrap:wrap; }
+.tb-of { background:#172554; color:#93c5fd; border:1px solid #1e3a8a; }
+.tb-df { background:#1a1a1a; color:#888888; border:1px solid #333333; }
+.tb-eq { background:#3b0764; color:#d8b4fe; border:1px solid #581c87; }
+.tc-stats { display:flex; gap:0.5rem; margin-top:0.52rem; padding-top:0.44rem; border-top:1px solid #222222; flex-wrap:wrap; }
 .tc-stat { font-size:0.61rem; font-weight:600; }
 
-/* EV BOX */
-.ev-box { text-align:center; margin-top:0.4rem; padding:0.35rem; background:#f8fafc; border-radius:7px; border:1px solid #e2e8f0; }
+/* EV BOX - versão escura */
+.ev-box { text-align:center; margin-top:0.4rem; padding:0.35rem; background:#111111; border-radius:7px; border:1px solid #333333; }
 .ev-val { font-family:'JetBrains Mono',monospace; font-size:1.08rem; font-weight:700; }
-.ev-lbl { font-size:0.58rem; margin-top:0.1rem; color:#94a3b8; }
+.ev-lbl { font-size:0.58rem; margin-top:0.1rem; color:#888888; }
 
-/* HIST CARDS */
-.hist-card { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0.68rem 0.88rem; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; margin-bottom:0.45rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+/* HIST CARDS - versão escura */
+.hist-card { background:#111111; border:1px solid #333333; border-radius:10px; padding:0.68rem 0.88rem; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; margin-bottom:0.45rem; box-shadow:0 1px 3px rgba(255,255,255,0.04); }
 .hist-card-left { flex:1; min-width:0; }
-.hist-match { font-size:0.8rem; font-weight:700; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.hist-date { font-size:0.6rem; color:#94a3b8; font-family:'JetBrains Mono',monospace; margin-top:0.12rem; }
+.hist-match { font-size:0.8rem; font-weight:700; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hist-date { font-size:0.6rem; color:#888888; font-family:'JetBrains Mono',monospace; margin-top:0.12rem; }
 .hist-right { display:flex; flex-direction:column; align-items:flex-end; gap:0.28rem; flex-shrink:0; }
 .hist-market { font-size:0.63rem; font-weight:700; padding:0.23rem 0.58rem; border-radius:999px; }
-.hm-g { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
-.hm-y { background:#fef9c3; color:#a16207; border:1px solid #fde68a; }
-.hm-r { background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0; }
-.hist-prob { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#94a3b8; }
+.hm-g { background:#14532d; color:#86efac; border:1px solid #166534; }
+.hm-y { background:#713f12; color:#fde047; border:1px solid #854d0e; }
+.hm-r { background:#1a1a1a; color:#888888; border:1px solid #333333; }
+.hist-prob { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#888888; }
 .hist-pills { display:flex; flex-wrap:wrap; gap:0.22rem; margin-top:0.3rem; }
 .hist-mini-pill { font-size:0.56rem; padding:0.15rem 0.38rem; border-radius:999px; font-weight:600; }
 
-/* DIVIDER */
-.divider { height:1px; background:#e2e8f0; margin:0.75rem 0; border:none; }
+/* DIVIDER - versão escura */
+.divider { height:1px; background:#333333; margin:0.75rem 0; border:none; }
 
-/* STREAMLIT OVERRIDES */
-.stTabs [data-baseweb="tab-list"] { background:#f1f5f9 !important; border:1px solid #e2e8f0 !important; border-radius:9px; padding:3px; gap:2px; }
-.stTabs [data-baseweb="tab"] { background:transparent !important; color:#94a3b8 !important; border-radius:7px !important; font-size:0.72rem !important; font-weight:600 !important; padding:0.38rem 0.72rem !important; }
-.stTabs [aria-selected="true"] { background:#ffffff !important; color:#2563eb !important; box-shadow:0 1px 3px rgba(0,0,0,0.08) !important; }
+/* STREAMLIT OVERRIDES - versão escura */
+.stTabs [data-baseweb="tab-list"] { background:#111111 !important; border:1px solid #333333 !important; border-radius:9px; padding:3px; gap:2px; }
+.stTabs [data-baseweb="tab"] { background:transparent !important; color:#888888 !important; border-radius:7px !important; font-size:0.72rem !important; font-weight:600 !important; padding:0.38rem 0.72rem !important; }
+.stTabs [aria-selected="true"] { background:#1a1a1a !important; color:#60a5fa !important; box-shadow:0 1px 3px rgba(255,255,255,0.08) !important; }
 .stTabs [data-baseweb="tab-panel"] { padding-top:0.8rem !important; }
 
 .stSelectbox label, .stMultiSelect label, .stNumberInput label, .stTextInput label {
     font-size:0.61rem !important; font-weight:600 !important; text-transform:uppercase !important;
-    letter-spacing:0.09em !important; color:#94a3b8 !important;
+    letter-spacing:0.09em !important; color:#888888 !important;
 }
 [data-baseweb="select"] > div:first-child, [data-baseweb="base-input"] {
-    background:#ffffff !important; border:1px solid #e2e8f0 !important;
-    border-radius:8px !important; font-size:0.76rem !important; color:#1e293b !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    background:#111111 !important; border:1px solid #333333 !important;
+    border-radius:8px !important; font-size:0.76rem !important; color:#ffffff !important;
+    box-shadow: 0 1px 2px rgba(255,255,255,0.04) !important;
 }
 .stButton > button {
     background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
@@ -193,26 +201,35 @@ html, body, .stApp {
 }
 .stButton > button:hover { opacity:0.9 !important; transform:translateY(-1px) !important; }
 .stDownloadButton > button {
-    background:#f0fdf4 !important; color:#15803d !important;
-    border:1px solid #bbf7d0 !important; border-radius:8px !important;
+    background:#1a1a1a !important; color:#86efac !important;
+    border:1px solid #166534 !important; border-radius:8px !important;
     font-size:0.71rem !important; font-weight:600 !important;
 }
-div[data-testid="stExpander"] { background:#fff !important; border:1px solid #e2e8f0 !important; border-radius:9px !important; box-shadow:0 1px 3px rgba(0,0,0,0.04) !important; }
-div[data-testid="stExpander"] summary { font-size:0.72rem !important; color:#64748b !important; }
+div[data-testid="stExpander"] { background:#111111 !important; border:1px solid #333333 !important; border-radius:9px !important; box-shadow:0 1px 3px rgba(255,255,255,0.04) !important; }
+div[data-testid="stExpander"] summary { font-size:0.72rem !important; color:#888888 !important; }
 .stDataFrame { font-size:0.68rem !important; }
 .stAlert { font-size:0.72rem !important; border-radius:8px !important; }
-.stNumberInput input { background:#fff !important; border:1px solid #e2e8f0 !important; color:#1e293b !important; border-radius:7px !important; font-family:'JetBrains Mono',monospace !important; font-size:0.76rem !important; }
-.stTextInput input { background:#fff !important; border:1px solid #e2e8f0 !important; color:#1e293b !important; border-radius:7px !important; font-size:0.76rem !important; }
-.stMultiSelect [data-baseweb="tag"] { background:#dbeafe !important; color:#1d4ed8 !important; border-radius:4px !important; font-size:0.64rem !important; }
+.stNumberInput input { background:#111111 !important; border:1px solid #333333 !important; color:#ffffff !important; border-radius:7px !important; font-family:'JetBrains Mono',monospace !important; font-size:0.76rem !important; }
+.stTextInput input { background:#111111 !important; border:1px solid #333333 !important; color:#ffffff !important; border-radius:7px !important; font-size:0.76rem !important; }
+.stMultiSelect [data-baseweb="tag"] { background:#1e3a8a !important; color:#93c5fd !important; border-radius:4px !important; font-size:0.64rem !important; }
 .stProgress > div > div > div { border-radius:3px !important; }
 
 ::-webkit-scrollbar { width:3px; height:3px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:#e2e8f0; border-radius:2px; }
+::-webkit-scrollbar-track { background:#111111; }
+::-webkit-scrollbar-thumb { background:#333333; border-radius:2px; }
 
 @media(max-width:640px){
     .block-container { padding:0.5rem 0.5rem 4.5rem !important; }
     .top-bar { margin:-0.5rem -0.5rem 0.75rem; }
+}
+
+/* Container para controles */
+.controls-container {
+    background: #111111;
+    border: 1px solid #333333;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -531,7 +548,7 @@ def render_metric_grid(analise, markets):
         odd  = analise.get(f'odd_justa_{m}',0)
         c    = mc_cls(prob, THRESHOLDS.get(m,60))
         lbl  = MARKET_MAP.get(m,m)
-        tiles += f'<div class="metric-card {c}"><div class="mv">{prob:.0f}<span style="font-size:0.52em;font-weight:400;color:#cbd5e1">%</span></div><div class="ml">{lbl}</div><div class="mo">@ {odd}</div></div>'
+        tiles += f'<div class="metric-card {c}"><div class="mv">{prob:.0f}<span style="font-size:0.52em;font-weight:400;color:#666666">%</span></div><div class="ml">{lbl}</div><div class="mo">@ {odd}</div></div>'
     st.markdown(f'<div class="metric-grid">{tiles}</div>', unsafe_allow_html=True)
 
 def render_prob_bars(analise, markets):
@@ -562,7 +579,7 @@ def render_team_card(name, p, side):
     stats = ""
     for lbl,k in [("BTTS","btts"),("O2.5","over25"),("O1.5","over15")]:
         v = p.get(k,0)
-        c = "#16a34a" if v>=60 else "#d97706" if v>=45 else "#dc2626"
+        c = "#4ade80" if v>=60 else "#fbbf24" if v>=45 else "#f87171"
         stats += f'<span class="tc-stat" style="color:{c}">{lbl} {v}%</span>'
     st.markdown(f'<div class="team-card"><div class="tc-hdr"><span class="tc-name">{side} {name}</span><span class="tc-badge {sc}">{p["estilo"]}</span></div>{bars}<div class="tc-stats">{stats}</div></div>', unsafe_allow_html=True)
 
@@ -599,34 +616,159 @@ def main():
     </div>""", unsafe_allow_html=True)
 
     if not comps:
-        st.error("❌ Configure FOOTBALL_DATA_API_KEY no .env"); return
+        st.error("❌ Configure FOOTBALL_DATA_API_KEY no .env")
+        return
 
     if st.session_state['selected_comp'] not in comps:
         st.session_state['selected_comp'] = list(comps.keys())[0]
 
-    # ── Seleção de Moeda (agora na interface principal) ───────────────────────
+    # ── CONTROLES ORGANIZADOS ───────────────────────────────────────────────
     with st.container():
-        col_curr1, col_curr2 = st.columns([1, 3])
-        with col_curr1:
+        st.markdown('<div class="controls-container">', unsafe_allow_html=True)
+        
+        # Primeira linha de controles
+        col1, col2, col3 = st.columns([1, 1, 2])
+        
+        with col1:
             st.markdown('<span class="sec-label">Moeda</span>', unsafe_allow_html=True)
-            currency_opts = [f"{v['flag']} {k} — {v['name']}" for k, v in CURRENCIES.items()]
-            curr_keys     = list(CURRENCIES.keys())
-            curr_idx      = curr_keys.index(curr) if curr in curr_keys else 0
-            sel_currency  = st.selectbox("Moeda", currency_opts, index=curr_idx, key="currency_sel", label_visibility="collapsed")
-            new_curr      = curr_keys[currency_opts.index(sel_currency)]
+            currency_opts = [f"{v['flag']} {k}" for k, v in CURRENCIES.items()]
+            curr_keys = list(CURRENCIES.keys())
+            curr_idx = curr_keys.index(curr) if curr in curr_keys else 0
+            sel_currency = st.selectbox("Moeda", currency_opts, index=curr_idx, key="currency_sel", label_visibility="collapsed")
+            new_curr = curr_keys[currency_opts.index(sel_currency)]
             if new_curr != st.session_state['currency']:
                 st.session_state['currency'] = new_curr
                 st.rerun()
+        
+        with col2:
+            st.markdown('<span class="sec-label">Competição</span>', unsafe_allow_html=True)
+            sel_comp = st.selectbox("Competição", list(comps.keys()),
+                                    index=list(comps.keys()).index(st.session_state['selected_comp']),
+                                    key='comp_sel', label_visibility="collapsed")
+            st.session_state['selected_comp'] = sel_comp
+        
+        with col3:
+            st.markdown('<span class="sec-label">Mercados para Análise</span>', unsafe_allow_html=True)
+            default_d = ['BTTS', 'Over 2.5', 'Over 1.5', 'Under 3.5', '2º Tempo +']
+            rev_map = {v: k for k, v in MARKET_MAP.items()}
+            sel_disp = st.multiselect("Selecione os mercados", list(MARKET_MAP.values()),
+                                      default=[m for m in default_d if m in MARKET_MAP.values()],
+                                      key="market_sel", label_visibility="collapsed")
+            selected_markets = [rev_map[m] for m in sel_disp]
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    # ── Seleção de Mercados (agora na interface principal) ────────────────────
+    comp_id = comps[sel_comp]
+
+    # ── SELEÇÃO DE PARTIDA ─────────────────────────────────────────────────
     with st.container():
-        st.markdown('<span class="sec-label">Mercados para Análise</span>', unsafe_allow_html=True)
-        default_d = ['BTTS','Over 2.5','Over 1.5','Under 3.5','2º Tempo +']
-        rev_map   = {v:k for k,v in MARKET_MAP.items()}
-        sel_disp  = st.multiselect("Selecione os mercados", list(MARKET_MAP.values()), 
-                                   default=[m for m in default_d if m in MARKET_MAP.values()],
-                                   key="market_sel")
-        selected_markets = [rev_map[m] for m in sel_disp]
+        st.markdown('<div class="controls-container">', unsafe_allow_html=True)
+        
+        st.markdown('<span class="sec-label">Selecionar Partida</span>', unsafe_allow_html=True)
+        with st.spinner("Buscando partidas..."):
+            matches = get_matches(comp_id)
+        
+        opts = []
+        for m in matches:
+            if m["status"] in ["SCHEDULED", "TIMED"]:
+                try:
+                    dt = datetime.fromisoformat(m["utcDate"].replace("Z", "+00:00"))
+                    opts.append({
+                        "id": m["id"],
+                        "home_id": m["homeTeam"]["id"],
+                        "away_id": m["awayTeam"]["id"],
+                        "disp": f"{m['homeTeam']['name']} vs {m['awayTeam']['name']} · {dt.strftime('%d/%m %H:%M')}",
+                        "home_team": m["homeTeam"]["name"],
+                        "away_team": m["awayTeam"]["name"],
+                        "date": dt
+                    })
+                except:
+                    continue
+        
+        if not opts:
+            st.warning("⚠️ Nenhuma partida encontrada para esta competição.")
+            sel_match = None
+        else:
+            sel_str = st.selectbox("Partida", [o["disp"] for o in opts], key='match_sel', label_visibility="collapsed")
+            sel_match = opts[[o["disp"] for o in opts].index(sel_str)]
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # ── CONFIGURAÇÃO DA APOSTA (se partida selecionada) ────────────────────
+    if sel_match:
+        with st.container():
+            st.markdown('<div class="controls-container">', unsafe_allow_html=True)
+            
+            st.markdown('<span class="sec-label">Configuração da Aposta</span>', unsafe_allow_html=True)
+            mc1, mc2, mc3 = st.columns([2, 1, 1])
+            
+            with mc1:
+                mercado_jogo_disp = st.selectbox("Mercado principal", options=list(MARKET_MAP.values()),
+                                                 key='mercado_jogo_sel', label_visibility="collapsed")
+                mercado_jogo = {v: k for k, v in MARKET_MAP.items()}[mercado_jogo_disp]
+            
+            with mc2:
+                odd_apostada = st.number_input("Odd", min_value=1.01, value=2.00, step=0.05, format="%.2f", key="odd_input")
+            
+            with mc3:
+                stake = st.number_input(f"Stake ({c_info['symbol']})", min_value=0.0, value=10.0, step=1.0, format="%.2f", key="stake_input")
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # Preview EV em tempo real (se já houver análise anterior)
+        if st.session_state.get('last_analise'):
+            prob_prev = st.session_state['last_analise'].get(f'prob_{mercado_jogo}', 0)
+            ev_prev = calculate_value_bet(prob_prev, odd_apostada) or 0
+            retorno = stake * odd_apostada
+            lucro = retorno - stake
+            ev_c = "#4ade80" if ev_prev > 0.05 else "#fbbf24" if ev_prev > 0 else "#f87171"
+            
+            st.markdown(f"""
+            <div style="display:flex;gap:0.45rem;margin:1rem 0;flex-wrap:wrap">
+                <div class="ev-box" style="flex:1;min-width:75px">
+                    <div class="ev-val" style="color:{ev_c}">{ev_prev:+.3f}</div>
+                    <div class="ev-lbl">Expected Value</div>
+                </div>
+                <div class="ev-box" style="flex:1;min-width:75px">
+                    <div class="ev-val" style="color:#60a5fa">{prob_prev:.0f}%</div>
+                    <div class="ev-lbl">Prob. Modelo</div>
+                </div>
+                <div class="ev-box" style="flex:1;min-width:75px">
+                    <div class="ev-val" style="color:#c084fc">{fmt_money(retorno, curr)}</div>
+                    <div class="ev-lbl">Retorno</div>
+                </div>
+                <div class="ev-box" style="flex:1;min-width:75px">
+                    <div class="ev-val" style="color:{'#4ade80' if lucro>=0 else '#f87171'}">{fmt_money(lucro, curr)}</div>
+                    <div class="ev-lbl">Lucro</div>
+                </div>
+            </div>""", unsafe_allow_html=True)
+
+        st.markdown("")
+        if st.button("🚀 Analisar Partida", use_container_width=True):
+            with st.spinner(f"Analisando {sel_match['home_team']} vs {sel_match['away_team']}…"):
+                try:
+                    markets_to_use = list(set(selected_markets + [mercado_jogo]))
+                    res = an.analisar(sel_match['home_team'], sel_match['away_team'], sel_comp,
+                                       sel_match['home_id'], sel_match['away_id'], comp_id, markets_to_use)
+                    res['mercado_escolhido'] = mercado_jogo
+                    res['odd_apostada'] = odd_apostada
+                    res['stake'] = stake
+                    res['currency'] = curr
+                    
+                    if an.historico:
+                        an.historico[-1]['mercado_escolhido'] = mercado_jogo
+                        an.historico[-1]['odd_apostada'] = odd_apostada
+                        an.historico[-1]['stake'] = stake
+                        an.historico[-1]['currency'] = curr
+                        an.historico[-1]['ev'] = round(calculate_value_bet(
+                            an.historico[-1]['probs'].get(mercado_jogo, 50), odd_apostada) or 0, 3)
+                        st.session_state.historico = an.historico
+                    
+                    st.session_state['last_analise'] = res
+                    st.session_state['last_match'] = sel_match
+                    
+                except Exception as e:
+                    st.error(f"Erro: {e}")
 
     # ── TABS ──────────────────────────────────────────────────────────────────
     tab1, tab2, tab3 = st.tabs(["🔍 Análise", "📊 Perfis", "📈 Histórico"])
@@ -635,109 +777,9 @@ def main():
     # TAB 1 — ANÁLISE
     # ══════════════════════════════════════════════════════════
     with tab1:
-        col_comp, col_match = st.columns([1,2])
-
-        with col_comp:
-            st.markdown('<span class="sec-label">Competição</span>', unsafe_allow_html=True)
-            sel_comp = st.selectbox("comp", list(comps.keys()),
-                                    index=list(comps.keys()).index(st.session_state['selected_comp']),
-                                    key='comp_sel', label_visibility="collapsed")
-            st.session_state['selected_comp'] = sel_comp
-
-        comp_id = comps[sel_comp]
-
-        with col_match:
-            st.markdown('<span class="sec-label">Partida</span>', unsafe_allow_html=True)
-            with st.spinner("Buscando…"):
-                matches = get_matches(comp_id)
-            opts = []
-            for m in matches:
-                if m["status"] in ["SCHEDULED","TIMED"]:
-                    try:
-                        dt = datetime.fromisoformat(m["utcDate"].replace("Z","+00:00"))
-                        opts.append({"id":m["id"],"home_id":m["homeTeam"]["id"],"away_id":m["awayTeam"]["id"],
-                                     "disp":f"{m['homeTeam']['name']} vs {m['awayTeam']['name']} · {dt.strftime('%d/%m %H:%M')}",
-                                     "home_team":m["homeTeam"]["name"],"away_team":m["awayTeam"]["name"],"date":dt})
-                    except: continue
-
-            sel_match = None
-            if not opts:
-                st.warning("⚠️ Nenhuma partida encontrada.")
-            else:
-                sel_str   = st.selectbox("partida",[o["disp"] for o in opts],key='match_sel',label_visibility="collapsed")
-                sel_match = opts[[o["disp"] for o in opts].index(sel_str)]
-
-        if sel_match:
-            st.markdown('<hr class="divider">', unsafe_allow_html=True)
-
-            # ── Seletor de mercado + aposta ───────────────────────────────────
-            st.markdown('<span class="sec-label">Mercado desta Aposta</span>', unsafe_allow_html=True)
-            mc1, mc2, mc3 = st.columns([2,1,1])
-            with mc1:
-                mercado_jogo_disp = st.selectbox("Mercado principal", options=list(MARKET_MAP.values()),
-                                                  key='mercado_jogo_sel', label_visibility="collapsed")
-                mercado_jogo = {v:k for k,v in MARKET_MAP.items()}[mercado_jogo_disp]
-            with mc2:
-                odd_apostada = st.number_input("Odd apostada", min_value=1.01, value=2.00, step=0.05, format="%.2f", key="odd_input")
-            with mc3:
-                stake = st.number_input(f"Stake ({c_info['symbol']})", min_value=0.0, value=10.0, step=1.0, format="%.2f", key="stake_input")
-
-            # Preview EV em tempo real (se já houver análise anterior)
-            if st.session_state.get('last_analise'):
-                prob_prev = st.session_state['last_analise'].get(f'prob_{mercado_jogo}', 0)
-                ev_prev   = calculate_value_bet(prob_prev, odd_apostada) or 0
-                retorno   = stake * odd_apostada
-                lucro     = retorno - stake
-                ev_c = "#16a34a" if ev_prev > 0.05 else "#d97706" if ev_prev > 0 else "#dc2626"
-                st.markdown(f"""
-                <div style="display:flex;gap:0.45rem;margin-top:0.35rem;flex-wrap:wrap">
-                    <div class="ev-box" style="flex:1;min-width:75px">
-                        <div class="ev-val" style="color:{ev_c}">{ev_prev:+.3f}</div>
-                        <div class="ev-lbl">Expected Value</div>
-                    </div>
-                    <div class="ev-box" style="flex:1;min-width:75px">
-                        <div class="ev-val" style="color:#2563eb">{prob_prev:.0f}%</div>
-                        <div class="ev-lbl">Prob. Modelo</div>
-                    </div>
-                    <div class="ev-box" style="flex:1;min-width:75px">
-                        <div class="ev-val" style="color:#7c3aed">{fmt_money(retorno, curr)}</div>
-                        <div class="ev-lbl">Retorno</div>
-                    </div>
-                    <div class="ev-box" style="flex:1;min-width:75px">
-                        <div class="ev-val" style="color:{'#16a34a' if lucro>=0 else '#dc2626'}">{fmt_money(lucro, curr)}</div>
-                        <div class="ev-lbl">Lucro</div>
-                    </div>
-                </div>""", unsafe_allow_html=True)
-
-            st.markdown("")
-            if st.button("🚀 Analisar Partida", use_container_width=True):
-                with st.spinner(f"Analisando {sel_match['home_team']} vs {sel_match['away_team']}…"):
-                    try:
-                        markets_to_use = list(set(selected_markets + [mercado_jogo]))
-                        res = an.analisar(sel_match['home_team'],sel_match['away_team'],sel_comp,
-                                          sel_match['home_id'],sel_match['away_id'],comp_id,markets_to_use)
-                        res['mercado_escolhido'] = mercado_jogo
-                        res['odd_apostada']      = odd_apostada
-                        res['stake']             = stake
-                        res['currency']          = curr
-                        if an.historico:
-                            an.historico[-1]['mercado_escolhido'] = mercado_jogo
-                            an.historico[-1]['odd_apostada']      = odd_apostada
-                            an.historico[-1]['stake']             = stake
-                            an.historico[-1]['currency']          = curr
-                            an.historico[-1]['ev'] = round(calculate_value_bet(
-                                an.historico[-1]['probs'].get(mercado_jogo, 50), odd_apostada) or 0, 3)
-                            st.session_state.historico = an.historico
-                        st.session_state['last_analise'] = res
-                        st.session_state['last_match']   = sel_match
-                    except Exception as e: st.error(f"Erro: {e}")
-
-        # ── Resultados ────────────────────────────────────────────────────────
-        if st.session_state['last_analise']:
+        if st.session_state['last_analise'] and st.session_state['last_match']:
             analise = st.session_state['last_analise']
-            match   = st.session_state['last_match']
-
-            st.markdown('<hr class="divider">', unsafe_allow_html=True)
+            match = st.session_state['last_match']
 
             st.markdown(f"""
             <div class="match-banner">
@@ -752,7 +794,7 @@ def main():
             st.markdown('<span class="sec-label">Probabilidades</span>', unsafe_allow_html=True)
             render_metric_grid(analise, selected_markets)
 
-            col_l, col_r = st.columns([3,2])
+            col_l, col_r = st.columns([3, 2])
 
             with col_l:
                 st.markdown('<span class="sec-label">Distribuição</span>', unsafe_allow_html=True)
@@ -770,69 +812,77 @@ def main():
                 st.markdown('<span class="sec-label">Análise</span>', unsafe_allow_html=True)
                 render_detail_card(analise['detail_lines'])
                 st.markdown('<span class="sec-label">Recomendações</span>', unsafe_allow_html=True)
-                if analise['recomendacoes']: render_pills(analise['recomendacoes'])
-                else: st.info("Selecione mercados acima.")
+                if analise['recomendacoes']:
+                    render_pills(analise['recomendacoes'])
+                else:
+                    st.info("Selecione mercados acima.")
 
             with st.expander("💰 Calculadora de Value Bet"):
                 if selected_markets:
                     n_cols = min(3, len(selected_markets))
-                    vcols  = st.columns(n_cols)
-                    for j,mkt in enumerate(selected_markets):
-                        with vcols[j%n_cols]:
-                            prob = analise.get(f'prob_{mkt}',0)
-                            oj   = analise.get(f'odd_justa_{mkt}',1.5)
-                            lbl  = MARKET_MAP.get(mkt,mkt)
-                            or_  = st.number_input(lbl,min_value=1.01,value=float(oj),step=0.01,format="%.2f",key=f"vi_{mkt}")
-                            ev   = calculate_value_bet(prob,or_) or 0
-                            el   = "✅ VALUE" if ev>0.05 else "✓ Pequeno" if ev>0 else "✗ Sem Value"
-                            ec   = "#16a34a" if ev>0.05 else "#d97706" if ev>0 else "#94a3b8"
+                    vcols = st.columns(n_cols)
+                    for j, mkt in enumerate(selected_markets):
+                        with vcols[j % n_cols]:
+                            prob = analise.get(f'prob_{mkt}', 0)
+                            oj = analise.get(f'odd_justa_{mkt}', 1.5)
+                            lbl = MARKET_MAP.get(mkt, mkt)
+                            or_ = st.number_input(lbl, min_value=1.01, value=float(oj), step=0.01, format="%.2f", key=f"vi_{mkt}")
+                            ev = calculate_value_bet(prob, or_) or 0
+                            el = "✅ VALUE" if ev > 0.05 else "✓ Pequeno" if ev > 0 else "✗ Sem Value"
+                            ec = "#4ade80" if ev > 0.05 else "#fbbf24" if ev > 0 else "#888888"
                             st.markdown(f'<div class="ev-box"><div class="ev-val" style="color:{ec}">{ev:+.3f}</div><div class="ev-lbl">{el}</div></div>', unsafe_allow_html=True)
-                else: st.info("Selecione mercados acima.")
+                else:
+                    st.info("Selecione mercados acima.")
 
             lo = an.fetch_live_odds(match['home_team'], match['away_team'])
             if lo:
                 with st.expander("📡 Odds ao Vivo"):
                     for bk in lo[:2]:
                         st.markdown(f'<span class="sec-label">{bk["title"]}</span>', unsafe_allow_html=True)
-                        mt = next((m for m in bk.get('markets',[]) if m['key']=='totals'),None)
+                        mt = next((m for m in bk.get('markets', []) if m['key'] == 'totals'), None)
                         if mt:
-                            ov = next((o['price'] for o in mt['outcomes'] if o.get('point')==2.5 and o.get('name')=='Over'),'N/A')
-                            un = next((o['price'] for o in mt['outcomes'] if o.get('point')==2.5 and o.get('name')=='Under'),'N/A')
-                            st.markdown(f'<div class="analysis-card" style="padding:0.52rem 0.75rem"><span style="font-size:0.7rem">Over 2.5 <b style="color:#2563eb">@{ov}</b> &nbsp; Under 2.5 <b style="color:#2563eb">@{un}</b></span></div>', unsafe_allow_html=True)
+                            ov = next((o['price'] for o in mt['outcomes'] if o.get('point') == 2.5 and o.get('name') == 'Over'), 'N/A')
+                            un = next((o['price'] for o in mt['outcomes'] if o.get('point') == 2.5 and o.get('name') == 'Under'), 'N/A')
+                            st.markdown(f'<div class="analysis-card" style="padding:0.52rem 0.75rem"><span style="font-size:0.7rem">Over 2.5 <b style="color:#60a5fa">@{ov}</b> &nbsp; Under 2.5 <b style="color:#60a5fa">@{un}</b></span></div>', unsafe_allow_html=True)
+        else:
+            st.info("⚠️ Selecione uma partida e clique em 'Analisar Partida' para ver os resultados.")
 
     # ══════════════════════════════════════════════════════════
     # TAB 2 — PERFIS
     # ══════════════════════════════════════════════════════════
     with tab2:
         if st.session_state['last_match']:
-            m_  = st.session_state['last_match']
+            m_ = st.session_state['last_match']
             cid = comps[st.session_state['selected_comp']]
             with st.spinner("Carregando perfis…"):
                 hp = fetch_team_profile(m_['home_id'], cid)
                 ap = fetch_team_profile(m_['away_id'], cid)
-            c1,c2 = st.columns(2)
-            with c1: render_team_card(m_['home_team'], hp, "🏠")
-            with c2: render_team_card(m_['away_team'], ap, "🚩")
+            c1, c2 = st.columns(2)
+            with c1:
+                render_team_card(m_['home_team'], hp, "🏠")
+            with c2:
+                render_team_card(m_['away_team'], ap, "🚩")
 
-            cats = ['Ataque','Defesa','BTTS','Over 2.5','Over 1.5']
-            hv   = [hp['ataque']*10,hp['defesa']*10,hp['btts'],hp['over25'],hp['over15']]
-            av   = [ap['ataque']*10,ap['defesa']*10,ap['btts'],ap['over25'],ap['over15']]
+            cats = ['Ataque', 'Defesa', 'BTTS', 'Over 2.5', 'Over 1.5']
+            hv = [hp['ataque'] * 10, hp['defesa'] * 10, hp['btts'], hp['over25'], hp['over15']]
+            av = [ap['ataque'] * 10, ap['defesa'] * 10, ap['btts'], ap['over25'], ap['over15']]
 
             fig = go.Figure()
-            for name,vals,color,fill in [
-                (m_['home_team'],hv,'#2563eb','rgba(37,99,235,0.10)'),
-                (m_['away_team'],av,'#ea580c','rgba(234,88,12,0.10)')
+            for name, vals, color, fill in [
+                (m_['home_team'], hv, '#60a5fa', 'rgba(96,165,250,0.10)'),
+                (m_['away_team'], av, '#f87171', 'rgba(248,113,113,0.10)')
             ]:
-                fig.add_trace(go.Scatterpolar(r=vals+[vals[0]],theta=cats+[cats[0]],fill='toself',name=name,
-                                               line=dict(color=color,width=2),fillcolor=fill))
+                fig.add_trace(go.Scatterpolar(r=vals + [vals[0]], theta=cats + [cats[0]], fill='toself', name=name,
+                                               line=dict(color=color, width=2), fillcolor=fill))
+            
             fig.update_layout(
-                polar=dict(bgcolor="#ffffff",
-                           radialaxis=dict(visible=True,range=[0,100],gridcolor="#e2e8f0",tickfont=dict(size=8,color="#94a3b8")),
-                           angularaxis=dict(gridcolor="#e2e8f0",tickfont=dict(size=9,color="#64748b"))),
-                paper_bgcolor="#f8fafc",
-                font=dict(family="Inter",color="#64748b"),
-                legend=dict(font=dict(size=10,color="#475569"),bgcolor="rgba(0,0,0,0)",orientation="h",x=0.5,xanchor="center",y=-0.08),
-                margin=dict(l=20,r=20,t=20,b=40), height=290
+                polar=dict(bgcolor="#111111",
+                           radialaxis=dict(visible=True, range=[0, 100], gridcolor="#333333", tickfont=dict(size=8, color="#888888")),
+                           angularaxis=dict(gridcolor="#333333", tickfont=dict(size=9, color="#cccccc"))),
+                paper_bgcolor="#000000",
+                font=dict(family="Inter", color="#888888"),
+                legend=dict(font=dict(size=10, color="#cccccc"), bgcolor="rgba(0,0,0,0)", orientation="h", x=0.5, xanchor="center", y=-0.08),
+                margin=dict(l=20, r=20, t=20, b=40), height=290
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
@@ -846,47 +896,53 @@ def main():
             hist_sorted = list(reversed(an.historico))
 
             # Filtros
-            fa, fb, fc = st.columns([2,2,1])
+            fa, fb, fc = st.columns([2, 2, 1])
             with fa:
-                filtro_mercado = st.selectbox("Filtrar mercado",["Todos"]+list(MARKET_MAP.values()),
-                                               key="hist_fm",label_visibility="collapsed")
+                filtro_mercado = st.selectbox("Filtrar mercado", ["Todos"] + list(MARKET_MAP.values()),
+                                               key="hist_fm", label_visibility="collapsed")
             with fb:
                 filtro_ev = st.selectbox("Filtrar EV",
-                    ["Todos","✅ Com Value (EV > 0)","🔥 EV Forte (> 0.05)","✗ Sem Value"],
-                    key="hist_fev",label_visibility="collapsed")
+                    ["Todos", "✅ Com Value (EV > 0)", "🔥 EV Forte (> 0.05)", "✗ Sem Value"],
+                    key="hist_fev", label_visibility="collapsed")
             with fc:
-                if st.button("🗑 Limpar",key="hist_clear"):
-                    st.session_state.historico = []; an.historico.clear(); st.rerun()
+                if st.button("🗑 Limpar", key="hist_clear"):
+                    st.session_state.historico = []
+                    an.historico.clear()
+                    st.rerun()
 
             st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
-            icons_m  = {'btts':'🎯','over25':'⚽','over15':'⚽','under35':'🛡️','under25':'🛡️','second_half_more':'⏱️'}
-            rev_map_h = {v:k for k,v in MARKET_MAP.items()}
+            icons_m = {'btts': '🎯', 'over25': '⚽', 'over15': '⚽', 'under35': '🛡️', 'under25': '🛡️', 'second_half_more': '⏱️'}
+            rev_map_h = {v: k for k, v in MARKET_MAP.items()}
 
             filtered = []
             for entry in hist_sorted:
-                mkey = entry.get('mercado_escolhido','')
-                ev   = entry.get('ev', 0)
-                if filtro_mercado != "Todos" and mkey != rev_map_h.get(filtro_mercado,mkey): continue
-                if filtro_ev == "✅ Com Value (EV > 0)" and ev <= 0: continue
-                if filtro_ev == "🔥 EV Forte (> 0.05)" and ev <= 0.05: continue
-                if filtro_ev == "✗ Sem Value" and ev > 0: continue
+                mkey = entry.get('mercado_escolhido', '')
+                ev = entry.get('ev', 0)
+                if filtro_mercado != "Todos" and mkey != rev_map_h.get(filtro_mercado, mkey):
+                    continue
+                if filtro_ev == "✅ Com Value (EV > 0)" and ev <= 0:
+                    continue
+                if filtro_ev == "🔥 EV Forte (> 0.05)" and ev <= 0.05:
+                    continue
+                if filtro_ev == "✗ Sem Value" and ev > 0:
+                    continue
                 filtered.append(entry)
 
             if not filtered:
                 st.info("Nenhuma aposta encontrada com esses filtros.")
             else:
-                total     = len(filtered)
-                com_value = sum(1 for e in filtered if e.get('ev',0) > 0)
-                ev_medio  = round(sum(e.get('ev',0) for e in filtered)/total,3) if total else 0
-                stake_tot = sum(e.get('stake',0) for e in filtered)
+                total = len(filtered)
+                com_value = sum(1 for e in filtered if e.get('ev', 0) > 0)
+                ev_medio = round(sum(e.get('ev', 0) for e in filtered) / total, 3) if total else 0
+                stake_tot = sum(e.get('stake', 0) for e in filtered)
 
-                sm1,sm2,sm3,sm4 = st.columns(4)
-                for col,lbl,val,c in [
-                    (sm1,"APOSTAS",str(total),"#2563eb"),
-                    (sm2,"COM VALUE",f"{com_value}/{total}","#16a34a"),
-                    (sm3,"EV MÉDIO",f"{ev_medio:+.3f}","#16a34a" if ev_medio>0 else "#dc2626"),
-                    (sm4,"STAKE",fmt_money(stake_tot,curr),"#7c3aed"),
+                sm1, sm2, sm3, sm4 = st.columns(4)
+                for col, lbl, val, c in [
+                    (sm1, "APOSTAS", str(total), "#60a5fa"),
+                    (sm2, "COM VALUE", f"{com_value}/{total}", "#4ade80"),
+                    (sm3, "EV MÉDIO", f"{ev_medio:+.3f}", "#4ade80" if ev_medio > 0 else "#f87171"),
+                    (sm4, "STAKE", fmt_money(stake_tot, curr), "#c084fc"),
                 ]:
                     col.markdown(f"""
                     <div class="metric-card" style="margin-bottom:0.65rem">
@@ -897,38 +953,42 @@ def main():
                 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
                 for entry in filtered:
-                    mkey    = entry.get('mercado_escolhido','btts')
-                    mlabel  = MARKET_MAP.get(mkey, mkey)
-                    micon   = icons_m.get(mkey,'🎯')
-                    ev      = entry.get('ev', 0)
-                    odd_ap  = entry.get('odd_apostada', 0)
+                    mkey = entry.get('mercado_escolhido', 'btts')
+                    mlabel = MARKET_MAP.get(mkey, mkey)
+                    micon = icons_m.get(mkey, '🎯')
+                    ev = entry.get('ev', 0)
+                    odd_ap = entry.get('odd_apostada', 0)
                     stake_e = entry.get('stake', 0)
                     entry_curr = entry.get('currency', curr)
                     retorno = stake_e * odd_ap if odd_ap else 0
-                    lucro   = retorno - stake_e
-                    probs   = entry.get('probs', {})
-                    prob_m  = probs.get(mkey, entry.get('prob_btts',0))
+                    lucro = retorno - stake_e
+                    probs = entry.get('probs', {})
+                    prob_m = probs.get(mkey, entry.get('prob_btts', 0))
 
-                    if ev > 0.05:  ev_cls,ev_c = "hm-g","#16a34a"
-                    elif ev > 0:   ev_cls,ev_c = "hm-y","#d97706"
-                    else:          ev_cls,ev_c = "hm-r","#dc2626"
+                    if ev > 0.05:
+                        ev_cls, ev_c = "hm-g", "#4ade80"
+                    elif ev > 0:
+                        ev_cls, ev_c = "hm-y", "#fbbf24"
+                    else:
+                        ev_cls, ev_c = "hm-r", "#888888"
 
                     mini_pills = ""
-                    for k,v in probs.items():
-                        if k == mkey: continue
-                        t  = THRESHOLDS.get(k,60)
-                        pc = "pill-g" if v>=t else "pill-y" if v>=t-10 else "pill-s"
-                        mini_pills += f'<span class="hist-mini-pill {pc}">{MARKET_MAP.get(k,k)} {v:.0f}%</span>'
+                    for k, v in probs.items():
+                        if k == mkey:
+                            continue
+                        t = THRESHOLDS.get(k, 60)
+                        pc = "pill-g" if v >= t else "pill-y" if v >= t - 10 else "pill-s"
+                        mini_pills += f'<span class="hist-mini-pill {pc}">{MARKET_MAP.get(k, k)} {v:.0f}%</span>'
 
-                    stake_html  = f'<span style="font-size:0.62rem;color:#7c3aed;font-family:JetBrains Mono,monospace">{fmt_money(stake_e, entry_curr)}</span>' if stake_e else ''
-                    odd_html    = f'<span style="font-size:0.62rem;color:#2563eb;font-family:JetBrains Mono,monospace">@ {odd_ap:.2f}</span>' if odd_ap else ''
-                    lucro_c     = "#16a34a" if lucro >= 0 else "#dc2626"
-                    lucro_html  = f'<span style="font-size:0.62rem;color:{lucro_c};font-family:JetBrains Mono,monospace">{fmt_money(lucro, entry_curr)}</span>' if odd_ap else ''
+                    stake_html = f'<span style="font-size:0.62rem;color:#c084fc;font-family:JetBrains Mono,monospace">{fmt_money(stake_e, entry_curr)}</span>' if stake_e else ''
+                    odd_html = f'<span style="font-size:0.62rem;color:#60a5fa;font-family:JetBrains Mono,monospace">@ {odd_ap:.2f}</span>' if odd_ap else ''
+                    lucro_c = "#4ade80" if lucro >= 0 else "#f87171"
+                    lucro_html = f'<span style="font-size:0.62rem;color:{lucro_c};font-family:JetBrains Mono,monospace">{fmt_money(lucro, entry_curr)}</span>' if odd_ap else ''
 
                     st.markdown(f"""
                     <div class="hist-card">
                         <div class="hist-card-left">
-                            <div class="hist-match">🏠 {entry['home']} <span style="color:#94a3b8;font-weight:400">vs</span> 🚩 {entry['away']}</div>
+                            <div class="hist-match">🏠 {entry['home']} <span style="color:#888888;font-weight:400">vs</span> 🚩 {entry['away']}</div>
                             <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.22rem;flex-wrap:wrap">
                                 <span class="hist-date">{entry['data']}</span>
                                 {odd_html}{stake_html}{lucro_html}
@@ -945,13 +1005,13 @@ def main():
                 st.markdown('<hr class="divider">', unsafe_allow_html=True)
                 pdf_b = an.gerar_pdf(curr)
                 st.download_button(
-                    "⬇️ Exportar PDF", 
-                    data=pdf_b, 
-                    file_name="relatorio_bets.pdf", 
+                    "⬇️ Exportar PDF",
+                    data=pdf_b,
+                    file_name="relatorio_bets.pdf",
                     mime="application/pdf"
                 )
         else:
-            st.info("Histórico vazio. Analise uma partida para popular.")
+            st.info("📊 Histórico vazio. Analise uma partida para popular.")
 
 if __name__ == "__main__":
     main()
