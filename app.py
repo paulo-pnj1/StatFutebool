@@ -37,12 +37,7 @@ html, body, .stApp {
 
 .block-container { padding: 0.75rem 0.75rem 5rem !important; max-width: 100% !important; }
 
-[data-testid="stSidebar"] {
-    background: #ffffff !important;
-    border-right: 1px solid #e2e8f0 !important;
-    min-width: 265px !important; max-width: 265px !important;
-}
-[data-testid="stSidebar"] .block-container { padding: 0.85rem 0.75rem !important; }
+/* Removendo estilos da sidebar */
 
 /* TOP BAR */
 .top-bar {
@@ -173,10 +168,6 @@ html, body, .stApp {
 
 /* DIVIDER */
 .divider { height:1px; background:#e2e8f0; margin:0.75rem 0; border:none; }
-
-/* SIDEBAR */
-.sb-title { font-size:0.57rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#94a3b8; padding:0.38rem 0 0.3rem; margin-bottom:0.35rem; border-bottom:1px solid #f1f5f9; }
-.wi { display:flex; align-items:center; padding:0.3rem 0.48rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; margin-bottom:0.25rem; font-size:0.65rem; color:#64748b; gap:0.32rem; }
 
 /* STREAMLIT OVERRIDES */
 .stTabs [data-baseweb="tab-list"] { background:#f1f5f9 !important; border:1px solid #e2e8f0 !important; border-radius:9px; padding:3px; gap:2px; }
@@ -613,50 +604,29 @@ def main():
     if st.session_state['selected_comp'] not in comps:
         st.session_state['selected_comp'] = list(comps.keys())[0]
 
-    # ── SIDEBAR ───────────────────────────────────────────────────────────────
-    selected_markets = ['btts','over25','over15','under35','second_half_more']
-    with st.sidebar:
-        # ── Moeda ─────────────────────────────────────────────────────────────
-        st.markdown('<div class="sb-title">💱 Moeda</div>', unsafe_allow_html=True)
-        currency_opts = [f"{v['flag']} {k} — {v['name']}" for k, v in CURRENCIES.items()]
-        curr_keys     = list(CURRENCIES.keys())
-        curr_idx      = curr_keys.index(curr) if curr in curr_keys else 0
-        sel_currency  = st.selectbox("Moeda", currency_opts, index=curr_idx, key="currency_sel", label_visibility="collapsed")
-        new_curr      = curr_keys[currency_opts.index(sel_currency)]
-        if new_curr != st.session_state['currency']:
-            st.session_state['currency'] = new_curr
-            st.rerun()
+    # ── Seleção de Moeda (agora na interface principal) ───────────────────────
+    with st.container():
+        col_curr1, col_curr2 = st.columns([1, 3])
+        with col_curr1:
+            st.markdown('<span class="sec-label">Moeda</span>', unsafe_allow_html=True)
+            currency_opts = [f"{v['flag']} {k} — {v['name']}" for k, v in CURRENCIES.items()]
+            curr_keys     = list(CURRENCIES.keys())
+            curr_idx      = curr_keys.index(curr) if curr in curr_keys else 0
+            sel_currency  = st.selectbox("Moeda", currency_opts, index=curr_idx, key="currency_sel", label_visibility="collapsed")
+            new_curr      = curr_keys[currency_opts.index(sel_currency)]
+            if new_curr != st.session_state['currency']:
+                st.session_state['currency'] = new_curr
+                st.rerun()
 
-        # ── Mercados ──────────────────────────────────────────────────────────
-        st.markdown('<div class="sb-title" style="margin-top:0.6rem">⚙ Mercados</div>', unsafe_allow_html=True)
+    # ── Seleção de Mercados (agora na interface principal) ────────────────────
+    with st.container():
+        st.markdown('<span class="sec-label">Mercados para Análise</span>', unsafe_allow_html=True)
         default_d = ['BTTS','Over 2.5','Over 1.5','Under 3.5','2º Tempo +']
         rev_map   = {v:k for k,v in MARKET_MAP.items()}
-        sel_disp  = st.multiselect("Mercados", list(MARKET_MAP.values()), default=[m for m in default_d if m in MARKET_MAP.values()])
+        sel_disp  = st.multiselect("Selecione os mercados", list(MARKET_MAP.values()), 
+                                   default=[m for m in default_d if m in MARKET_MAP.values()],
+                                   key="market_sel")
         selected_markets = [rev_map[m] for m in sel_disp]
-        st.selectbox("Filtro",["Todos","🔥 Value Bet","🛡️ Baixo Risco (>70%)"])
-
-        # ── Watchlist ─────────────────────────────────────────────────────────
-        st.markdown('<div class="sb-title" style="margin-top:0.6rem">📋 Watchlist</div>', unsafe_allow_html=True)
-        new_m = st.text_input("Adicionar", placeholder="Arsenal vs Chelsea", key="nmi")
-        if st.button("＋ Adicionar") and new_m:
-            an.watchlist.append(new_m); st.session_state.watchlist = an.watchlist; st.rerun()
-        for i,mw in enumerate(an.watchlist):
-            c1,c2 = st.columns([5,1])
-            c1.markdown(f'<div class="wi">⚽ {mw}</div>', unsafe_allow_html=True)
-            if c2.button("✕",key=f"r{i}"):
-                an.watchlist.pop(i); st.session_state.watchlist = an.watchlist; st.rerun()
-        if not an.watchlist:
-            st.markdown('<div style="font-size:0.62rem;color:#94a3b8;padding:0.2rem 0">Lista vazia</div>', unsafe_allow_html=True)
-
-        # ── Alertas ───────────────────────────────────────────────────────────
-        st.markdown('<div class="sb-title" style="margin-top:0.6rem">📧 Alertas</div>', unsafe_allow_html=True)
-        email_to = st.text_input("Email", value="seu@email.com", key="em_sb")
-        if st.button("Enviar Alertas"):
-            for ms in an.watchlist:
-                try:
-                    h,a = ms.split(" vs ")
-                    an.send_alert({'home_team':h,'away_team':a,'date':datetime.now()},{'prob_btts':65,'prob_over25':70},email_to)
-                except Exception as e: st.error(f"{e}")
 
     # ── TABS ──────────────────────────────────────────────────────────────────
     tab1, tab2, tab3 = st.tabs(["🔍 Análise", "📊 Perfis", "📈 Histórico"])
@@ -801,7 +771,7 @@ def main():
                 render_detail_card(analise['detail_lines'])
                 st.markdown('<span class="sec-label">Recomendações</span>', unsafe_allow_html=True)
                 if analise['recomendacoes']: render_pills(analise['recomendacoes'])
-                else: st.info("Selecione mercados na sidebar.")
+                else: st.info("Selecione mercados acima.")
 
             with st.expander("💰 Calculadora de Value Bet"):
                 if selected_markets:
@@ -817,7 +787,7 @@ def main():
                             el   = "✅ VALUE" if ev>0.05 else "✓ Pequeno" if ev>0 else "✗ Sem Value"
                             ec   = "#16a34a" if ev>0.05 else "#d97706" if ev>0 else "#94a3b8"
                             st.markdown(f'<div class="ev-box"><div class="ev-val" style="color:{ec}">{ev:+.3f}</div><div class="ev-lbl">{el}</div></div>', unsafe_allow_html=True)
-                else: st.info("Selecione mercados.")
+                else: st.info("Selecione mercados acima.")
 
             lo = an.fetch_live_odds(match['home_team'], match['away_team'])
             if lo:
