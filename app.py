@@ -949,12 +949,13 @@ def main():
             ap_v = [ap['ataque']*10, ap['defesa']*10, ap['btts'], ap['over25'], ap['over15']]
 
             fig = go.Figure()
-            for name, vals, color in [(m['home_team'], hp_v, '#3b82f6'),(m['away_team'], ap_v, '#f97316')]:
+            fill_colors = ['rgba(59,130,246,0.15)', 'rgba(249,115,22,0.15)']
+            for (name, vals, color), fill in zip([(m['home_team'], hp_v, '#3b82f6'),(m['away_team'], ap_v, '#f97316')], fill_colors):
                 fig.add_trace(go.Scatterpolar(
                     r=vals+[vals[0]], theta=cats+[cats[0]],
                     fill='toself', name=name,
                     line=dict(color=color, width=2),
-                    fillcolor=color.replace(')',',0.15)').replace('rgb','rgba') if 'rgb' in color else color+'26'
+                    fillcolor=fill
                 ))
             fig.update_layout(
                 polar=dict(
