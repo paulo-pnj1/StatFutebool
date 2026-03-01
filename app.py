@@ -959,16 +959,16 @@ def main():
                 ))
             fig.update_layout(
                 polar=dict(
-                    bgcolor='#0f172a',
-                    radialaxis=dict(visible=True, range=[0,100], color='#475569',
-                                   gridcolor='#1e2535', tickfont=dict(size=8,color='#475569')),
-                    angularaxis=dict(color='#94a3b8', gridcolor='#1e2535',
-                                    tickfont=dict(size=9,color='#94a3b8'))
+                    bgcolor="#0f172a",
+                    radialaxis=dict(visible=True, range=[0,100],
+                                   gridcolor="#1e2535", tickfont=dict(size=8, color="#475569")),
+                    angularaxis=dict(gridcolor="#1e2535", tickfont=dict(size=9, color="#94a3b8"))
                 ),
-                paper_bgcolor='#111827', plot_bgcolor='#111827',
-                font=dict(family='DM Sans', color='#94a3b8'),
-                legend=dict(font=dict(size=10,color='#94a3b8'), bgcolor='transparent'),
-                margin=dict(l=30,r=30,t=30,b=30), height=300
+                paper_bgcolor="#111827",
+                font=dict(family="DM Sans", color="#94a3b8"),
+                legend=dict(font=dict(size=10, color="#94a3b8"), bgcolor="rgba(0,0,0,0)"),
+                margin=dict(l=30, r=30, t=30, b=30),
+                height=300
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
