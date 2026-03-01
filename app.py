@@ -10,7 +10,6 @@ from email.mime.text import MIMEText as MimeText
 from email.mime.multipart import MIMEMultipart as MimeMultipart
 from fpdf import FPDF
 
-# ── SETUP ─────────────────────────────────────────────────────────────────────
 load_dotenv()
 
 st.set_page_config(
@@ -20,7 +19,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ── DESIGN SYSTEM — MOBILE FIRST ─────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -29,24 +27,20 @@ st.markdown("""
 
 html, body, .stApp {
     font-family: 'Inter', sans-serif;
-    background: #060810;
-    color: #cbd5e1;
+    background: #f8fafc;
+    color: #1e293b;
     -webkit-font-smoothing: antialiased;
 }
 
 #MainMenu, footer, header, .stDeployButton,
 [data-testid="collapsedControl"] { display: none !important; }
 
-.block-container {
-    padding: 0.75rem 0.75rem 5rem !important;
-    max-width: 100% !important;
-}
+.block-container { padding: 0.75rem 0.75rem 5rem !important; max-width: 100% !important; }
 
 [data-testid="stSidebar"] {
-    background: #0b0e1a !important;
-    border-right: 1px solid #1a2035 !important;
-    min-width: 260px !important;
-    max-width: 260px !important;
+    background: #ffffff !important;
+    border-right: 1px solid #e2e8f0 !important;
+    min-width: 265px !important; max-width: 265px !important;
 }
 [data-testid="stSidebar"] .block-container { padding: 0.85rem 0.75rem !important; }
 
@@ -54,168 +48,180 @@ html, body, .stApp {
 .top-bar {
     position: sticky; top: 0; z-index: 100;
     display: flex; align-items: center; gap: 0.6rem;
-    padding: 0.6rem 0.85rem;
-    background: rgba(6,8,16,0.96);
+    padding: 0.65rem 1rem;
+    background: rgba(255,255,255,0.97);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid #1a2035;
-    margin: -0.75rem -0.75rem 0.85rem;
+    border-bottom: 1px solid #e2e8f0;
+    margin: -0.75rem -0.75rem 0.9rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
-.top-bar .tb-icon { font-size: 1.2rem; flex-shrink: 0; }
-.top-bar .tb-title { font-size: 0.92rem; font-weight: 700; color: #f1f5f9; letter-spacing:-0.02em; flex:1; }
-.top-bar .tb-sub { font-size: 0.58rem; color: #334155; font-family:'JetBrains Mono',monospace; }
+.tb-icon { font-size: 1.25rem; flex-shrink: 0; }
+.tb-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; letter-spacing:-0.02em; flex:1; }
+.tb-sub { font-size: 0.58rem; color: #94a3b8; font-family:'JetBrains Mono',monospace; }
 .status-dots { display:flex; gap:0.3rem; align-items:center; flex-shrink:0; }
 .dot { width:7px; height:7px; border-radius:50%; }
-.dot-g { background:#22c55e; box-shadow:0 0 5px #22c55e88; }
-.dot-y { background:#eab308; }
+.dot-g { background:#22c55e; box-shadow:0 0 6px #22c55e99; }
+.dot-y { background:#f59e0b; }
 .dot-r { background:#ef4444; }
+
+/* CURRENCY CHIP */
+.currency-chip {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.22rem 0.6rem;
+    background: #eff6ff; border: 1px solid #bfdbfe;
+    border-radius: 999px; font-size: 0.68rem; font-weight: 700;
+    color: #1d4ed8; font-family: 'JetBrains Mono', monospace;
+}
 
 /* LABELS */
 .sec-label {
     font-size: 0.59rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.12em; color: #334155; margin-bottom: 0.48rem;
-    margin-top: 0.1rem; display: block;
+    letter-spacing: 0.12em; color: #94a3b8;
+    margin-bottom: 0.45rem; margin-top: 0.1rem; display: block;
 }
 
 /* MATCH BANNER */
 .match-banner {
-    background: linear-gradient(135deg,#0f172a,#0d1526);
-    border: 1px solid #1e3a5f; border-radius: 12px;
-    padding: 0.8rem 1rem; margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+    border: 1px solid #bfdbfe; border-radius: 12px;
+    padding: 0.85rem 1rem; margin-bottom: 0.8rem;
     display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
 }
 .match-teams { flex:1; min-width:0; }
-.match-teams .mh { font-size:0.9rem; font-weight:700; color:#f1f5f9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.match-teams .mv { font-size:0.58rem; color:#334155; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin:0.08rem 0; }
-.match-teams .ma { font-size:0.85rem; font-weight:600; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.match-date { font-family:'JetBrains Mono',monospace; font-size:0.63rem; color:#475569; background:#0a0f1e; border:1px solid #1a2035; border-radius:6px; padding:0.28rem 0.5rem; white-space:nowrap; flex-shrink:0; }
+.match-teams .mh { font-size:0.92rem; font-weight:700; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.match-teams .mv { font-size:0.58rem; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin:0.07rem 0; }
+.match-teams .ma { font-size:0.88rem; font-weight:600; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.match-date { font-family:'JetBrains Mono',monospace; font-size:0.63rem; color:#64748b; background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:0.28rem 0.55rem; white-space:nowrap; flex-shrink:0; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
 
 /* METRIC GRID */
-.metric-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.42rem; margin-bottom:0.72rem; }
+.metric-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.45rem; margin-bottom:0.75rem; }
 @media(max-width:480px){ .metric-grid{ grid-template-columns:repeat(2,1fr); } }
 .metric-card {
-    background:#0b0e1a; border:1px solid #1a2035; border-radius:10px;
-    padding:0.58rem 0.45rem; text-align:center; position:relative; overflow:hidden;
+    background:#fff; border:1px solid #e2e8f0; border-radius:10px;
+    padding:0.62rem 0.5rem; text-align:center; position:relative; overflow:hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
-.metric-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; border-radius:10px 10px 0 0; }
-.mc-g::before { background:linear-gradient(90deg,#166534,#4ade80); }
-.mc-y::before { background:linear-gradient(90deg,#d97706,#fbbf24); }
-.mc-r::before { background:linear-gradient(90deg,#991b1b,#f87171); }
-.metric-card .mv { font-family:'JetBrains Mono',monospace; font-size:1.4rem; font-weight:700; line-height:1; letter-spacing:-0.03em; }
-.mc-g .mv { color:#4ade80; }  .mc-y .mv { color:#fbbf24; }  .mc-r .mv { color:#f87171; }
-.metric-card .ml { font-size:0.57rem; font-weight:600; color:#475569; text-transform:uppercase; letter-spacing:0.07em; margin-top:0.16rem; }
-.metric-card .mo { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#334155; margin-top:0.1rem; }
+.metric-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:10px 10px 0 0; }
+.mc-g::before { background: linear-gradient(90deg,#16a34a,#4ade80); }
+.mc-y::before { background: linear-gradient(90deg,#d97706,#fbbf24); }
+.mc-r::before { background: linear-gradient(90deg,#dc2626,#f87171); }
+.metric-card .mv { font-family:'JetBrains Mono',monospace; font-size:1.45rem; font-weight:700; line-height:1; letter-spacing:-0.03em; }
+.mc-g .mv { color:#16a34a; } .mc-y .mv { color:#d97706; } .mc-r .mv { color:#dc2626; }
+.metric-card .ml { font-size:0.57rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.07em; margin-top:0.17rem; }
+.metric-card .mo { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#cbd5e1; margin-top:0.1rem; }
 
 /* PROB BARS */
-.pbar-wrap { background:#0b0e1a; border:1px solid #1a2035; border-radius:10px; padding:0.65rem 0.82rem; margin-bottom:0.72rem; }
-.pbar-row { display:flex; align-items:center; gap:0.52rem; margin-bottom:0.48rem; }
+.pbar-wrap { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0.68rem 0.85rem; margin-bottom:0.75rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+.pbar-row { display:flex; align-items:center; gap:0.52rem; margin-bottom:0.5rem; }
 .pbar-row:last-child { margin-bottom:0; }
-.pbar-lbl { font-size:0.63rem; color:#64748b; width:68px; flex-shrink:0; font-weight:500; }
-.pbar-track { flex:1; height:5px; background:#1a2035; border-radius:3px; overflow:hidden; }
+.pbar-lbl { font-size:0.63rem; color:#64748b; width:72px; flex-shrink:0; font-weight:500; }
+.pbar-track { flex:1; height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden; }
 .pbar-fill { height:100%; border-radius:3px; }
-.pb-g { background:linear-gradient(90deg,#166534,#4ade80); }
-.pb-y { background:linear-gradient(90deg,#92400e,#fbbf24); }
-.pb-r { background:linear-gradient(90deg,#7f1d1d,#f87171); }
-.pbar-pct { font-family:'JetBrains Mono',monospace; font-size:0.63rem; color:#94a3b8; width:28px; text-align:right; flex-shrink:0; }
+.pb-g { background: linear-gradient(90deg,#16a34a,#4ade80); }
+.pb-y { background: linear-gradient(90deg,#d97706,#fbbf24); }
+.pb-r { background: linear-gradient(90deg,#dc2626,#f87171); }
+.pbar-pct { font-family:'JetBrains Mono',monospace; font-size:0.63rem; color:#475569; width:30px; text-align:right; flex-shrink:0; }
 
 /* ANALYSIS CARD */
-.analysis-card { background:#0b0e1a; border:1px solid #1a2035; border-radius:10px; padding:0.65rem 0.8rem; margin-bottom:0.72rem; }
-.aline { display:flex; gap:0.48rem; align-items:flex-start; padding:0.3rem 0; border-bottom:1px solid #0f1626; font-size:0.69rem; color:#64748b; line-height:1.45; }
+.analysis-card { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0.68rem 0.85rem; margin-bottom:0.75rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+.aline { display:flex; gap:0.48rem; align-items:flex-start; padding:0.32rem 0; border-bottom:1px solid #f8fafc; font-size:0.7rem; color:#475569; line-height:1.45; }
 .aline:last-child { border-bottom:none; padding-bottom:0; }
-.aline .ai { flex-shrink:0; font-size:0.73rem; line-height:1.45; }
+.aline .ai { flex-shrink:0; font-size:0.75rem; line-height:1.45; }
 
 /* H2H */
-.h2h-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.42rem; margin-bottom:0.72rem; }
-.h2h-tile { background:#0b0e1a; border:1px solid #1a2035; border-radius:10px; padding:0.58rem; text-align:center; }
-.h2h-tile .hv { font-family:'JetBrains Mono',monospace; font-size:1.15rem; font-weight:700; color:#60a5fa; }
-.h2h-tile .hl { font-size:0.57rem; color:#334155; text-transform:uppercase; letter-spacing:0.06em; margin-top:0.08rem; }
+.h2h-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.45rem; margin-bottom:0.75rem; }
+.h2h-tile { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0.6rem; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+.h2h-tile .hv { font-family:'JetBrains Mono',monospace; font-size:1.18rem; font-weight:700; color:#2563eb; }
+.h2h-tile .hl { font-size:0.58rem; color:#94a3b8; text-transform:uppercase; letter-spacing:0.06em; margin-top:0.1rem; }
 
 /* PILLS */
-.pill-wrap { display:flex; flex-wrap:wrap; gap:0.32rem; margin-bottom:0.72rem; }
-.pill { display:inline-flex; align-items:center; gap:0.28rem; padding:0.26rem 0.58rem; border-radius:999px; font-size:0.63rem; font-weight:600; line-height:1; }
-.pill-g { background:#052e16; color:#4ade80; border:1px solid #166534; }
-.pill-y { background:#1c1400; color:#fbbf24; border:1px solid #713f12; }
-.pill-s { background:#0f172a; color:#475569; border:1px solid #1e2535; }
+.pill-wrap { display:flex; flex-wrap:wrap; gap:0.32rem; margin-bottom:0.75rem; }
+.pill { display:inline-flex; align-items:center; gap:0.28rem; padding:0.28rem 0.62rem; border-radius:999px; font-size:0.64rem; font-weight:600; line-height:1; }
+.pill-g { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
+.pill-y { background:#fef9c3; color:#a16207; border:1px solid #fde68a; }
+.pill-s { background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0; }
 
 /* TEAM CARD */
-.team-card { background:#0b0e1a; border:1px solid #1a2035; border-radius:10px; padding:0.78rem; margin-bottom:0.62rem; }
-.tc-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem; }
-.tc-name { font-size:0.8rem; font-weight:700; color:#f1f5f9; }
-.tc-badge { font-size:0.54rem; font-weight:700; padding:0.17rem 0.48rem; border-radius:999px; text-transform:uppercase; letter-spacing:0.07em; }
-.tb-of { background:#172554; color:#93c5fd; border:1px solid #1d4ed8; }
-.tb-df { background:#1c1917; color:#a8a29e; border:1px solid #44403c; }
-.tb-eq { background:#1a0f2e; color:#a78bfa; border:1px solid #5b21b6; }
-.tc-stats { display:flex; gap:0.48rem; margin-top:0.5rem; padding-top:0.42rem; border-top:1px solid #0f1626; flex-wrap:wrap; }
-.tc-stat { font-size:0.6rem; font-weight:500; }
+.team-card { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0.8rem; margin-bottom:0.65rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+.tc-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.62rem; }
+.tc-name { font-size:0.82rem; font-weight:700; color:#0f172a; }
+.tc-badge { font-size:0.55rem; font-weight:700; padding:0.18rem 0.5rem; border-radius:999px; text-transform:uppercase; letter-spacing:0.07em; }
+.tb-of { background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; }
+.tb-df { background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0; }
+.tb-eq { background:#f5f3ff; color:#7c3aed; border:1px solid #ddd6fe; }
+.tc-stats { display:flex; gap:0.5rem; margin-top:0.52rem; padding-top:0.44rem; border-top:1px solid #f1f5f9; flex-wrap:wrap; }
+.tc-stat { font-size:0.61rem; font-weight:600; }
 
-/* EV */
-.ev-box { text-align:center; margin-top:0.38rem; padding:0.32rem; background:#060810; border-radius:6px; border:1px solid #1a2035; }
-.ev-val { font-family:'JetBrains Mono',monospace; font-size:1.05rem; font-weight:700; }
-.ev-lbl { font-size:0.57rem; margin-top:0.08rem; }
+/* EV BOX */
+.ev-box { text-align:center; margin-top:0.4rem; padding:0.35rem; background:#f8fafc; border-radius:7px; border:1px solid #e2e8f0; }
+.ev-val { font-family:'JetBrains Mono',monospace; font-size:1.08rem; font-weight:700; }
+.ev-lbl { font-size:0.58rem; margin-top:0.1rem; color:#94a3b8; }
 
 /* HIST CARDS */
-.hist-list { display:flex; flex-direction:column; gap:0.5rem; margin-bottom:0.75rem; }
-.hist-card { background:#0b0e1a; border:1px solid #1a2035; border-radius:10px; padding:0.65rem 0.85rem; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; }
+.hist-card { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0.68rem 0.88rem; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; margin-bottom:0.45rem; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
 .hist-card-left { flex:1; min-width:0; }
-.hist-match { font-size:0.78rem; font-weight:700; color:#f1f5f9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.hist-date { font-size:0.6rem; color:#334155; font-family:'JetBrains Mono',monospace; margin-top:0.12rem; }
+.hist-match { font-size:0.8rem; font-weight:700; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hist-date { font-size:0.6rem; color:#94a3b8; font-family:'JetBrains Mono',monospace; margin-top:0.12rem; }
 .hist-right { display:flex; flex-direction:column; align-items:flex-end; gap:0.28rem; flex-shrink:0; }
-.hist-market { font-size:0.62rem; font-weight:700; padding:0.22rem 0.55rem; border-radius:999px; }
-.hm-g { background:#052e16; color:#4ade80; border:1px solid #166534; }
-.hm-y { background:#1c1400; color:#fbbf24; border:1px solid #713f12; }
-.hm-r { background:#0f172a; color:#475569; border:1px solid #1e2535; }
-.hist-prob { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#64748b; }
+.hist-market { font-size:0.63rem; font-weight:700; padding:0.23rem 0.58rem; border-radius:999px; }
+.hm-g { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
+.hm-y { background:#fef9c3; color:#a16207; border:1px solid #fde68a; }
+.hm-r { background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0; }
+.hist-prob { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#94a3b8; }
 .hist-pills { display:flex; flex-wrap:wrap; gap:0.22rem; margin-top:0.3rem; }
 .hist-mini-pill { font-size:0.56rem; padding:0.15rem 0.38rem; border-radius:999px; font-weight:600; }
 
 /* DIVIDER */
-.divider { height:1px; background:#1a2035; margin:0.75rem 0; border:none; }
+.divider { height:1px; background:#e2e8f0; margin:0.75rem 0; border:none; }
 
 /* SIDEBAR */
-.sb-title { font-size:0.57rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#1e3a5f; padding:0.38rem 0 0.32rem; margin-bottom:0.38rem; border-bottom:1px solid #0f1626; }
-.wi { display:flex; align-items:center; padding:0.3rem 0.48rem; background:#060810; border:1px solid #1a2035; border-radius:6px; margin-bottom:0.26rem; font-size:0.65rem; color:#64748b; gap:0.32rem; }
+.sb-title { font-size:0.57rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#94a3b8; padding:0.38rem 0 0.3rem; margin-bottom:0.35rem; border-bottom:1px solid #f1f5f9; }
+.wi { display:flex; align-items:center; padding:0.3rem 0.48rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; margin-bottom:0.25rem; font-size:0.65rem; color:#64748b; gap:0.32rem; }
 
 /* STREAMLIT OVERRIDES */
-.stTabs [data-baseweb="tab-list"] { background:#0b0e1a !important; border:1px solid #1a2035 !important; border-radius:9px; padding:3px; gap:2px; }
-.stTabs [data-baseweb="tab"] { background:transparent !important; color:#475569 !important; border-radius:7px !important; font-size:0.71rem !important; font-weight:600 !important; padding:0.36rem 0.68rem !important; }
-.stTabs [aria-selected="true"] { background:#1e3a5f !important; color:#93c5fd !important; }
-.stTabs [data-baseweb="tab-panel"] { padding-top:0.78rem !important; }
+.stTabs [data-baseweb="tab-list"] { background:#f1f5f9 !important; border:1px solid #e2e8f0 !important; border-radius:9px; padding:3px; gap:2px; }
+.stTabs [data-baseweb="tab"] { background:transparent !important; color:#94a3b8 !important; border-radius:7px !important; font-size:0.72rem !important; font-weight:600 !important; padding:0.38rem 0.72rem !important; }
+.stTabs [aria-selected="true"] { background:#ffffff !important; color:#2563eb !important; box-shadow:0 1px 3px rgba(0,0,0,0.08) !important; }
+.stTabs [data-baseweb="tab-panel"] { padding-top:0.8rem !important; }
 
 .stSelectbox label, .stMultiSelect label, .stNumberInput label, .stTextInput label {
     font-size:0.61rem !important; font-weight:600 !important; text-transform:uppercase !important;
-    letter-spacing:0.09em !important; color:#334155 !important;
+    letter-spacing:0.09em !important; color:#94a3b8 !important;
 }
 [data-baseweb="select"] > div:first-child, [data-baseweb="base-input"] {
-    background:#0b0e1a !important; border:1px solid #1a2035 !important;
-    border-radius:8px !important; font-size:0.75rem !important; color:#cbd5e1 !important;
+    background:#ffffff !important; border:1px solid #e2e8f0 !important;
+    border-radius:8px !important; font-size:0.76rem !important; color:#1e293b !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
 }
 .stButton > button {
-    background:linear-gradient(135deg,#1d4ed8,#1e40af) !important;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
     color:#fff !important; border:none !important; border-radius:9px !important;
-    font-size:0.77rem !important; font-weight:700 !important; padding:0.58rem 1.3rem !important;
-    width:100% !important; transition:opacity 0.15s,transform 0.1s !important;
+    font-size:0.78rem !important; font-weight:700 !important; padding:0.6rem 1.3rem !important;
+    width:100% !important; transition:opacity 0.15s, transform 0.1s !important;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.28) !important;
 }
 .stButton > button:hover { opacity:0.9 !important; transform:translateY(-1px) !important; }
 .stDownloadButton > button {
-    background:#051a05 !important; color:#4ade80 !important;
-    border:1px solid #166534 !important; border-radius:8px !important;
+    background:#f0fdf4 !important; color:#15803d !important;
+    border:1px solid #bbf7d0 !important; border-radius:8px !important;
     font-size:0.71rem !important; font-weight:600 !important;
 }
-div[data-testid="stExpander"] { background:#0b0e1a !important; border:1px solid #1a2035 !important; border-radius:9px !important; }
-div[data-testid="stExpander"] summary { font-size:0.71rem !important; color:#64748b !important; }
-.stDataFrame { font-size:0.67rem !important; }
-.stAlert { font-size:0.71rem !important; border-radius:8px !important; }
-.stNumberInput input { background:#0b0e1a !important; border:1px solid #1a2035 !important; color:#cbd5e1 !important; border-radius:7px !important; font-family:'JetBrains Mono',monospace !important; font-size:0.75rem !important; }
-.stTextInput input { background:#0b0e1a !important; border:1px solid #1a2035 !important; color:#cbd5e1 !important; border-radius:7px !important; font-size:0.75rem !important; }
-.stMultiSelect [data-baseweb="tag"] { background:#1e3a5f !important; color:#93c5fd !important; border-radius:4px !important; font-size:0.63rem !important; }
+div[data-testid="stExpander"] { background:#fff !important; border:1px solid #e2e8f0 !important; border-radius:9px !important; box-shadow:0 1px 3px rgba(0,0,0,0.04) !important; }
+div[data-testid="stExpander"] summary { font-size:0.72rem !important; color:#64748b !important; }
+.stDataFrame { font-size:0.68rem !important; }
+.stAlert { font-size:0.72rem !important; border-radius:8px !important; }
+.stNumberInput input { background:#fff !important; border:1px solid #e2e8f0 !important; color:#1e293b !important; border-radius:7px !important; font-family:'JetBrains Mono',monospace !important; font-size:0.76rem !important; }
+.stTextInput input { background:#fff !important; border:1px solid #e2e8f0 !important; color:#1e293b !important; border-radius:7px !important; font-size:0.76rem !important; }
+.stMultiSelect [data-baseweb="tag"] { background:#dbeafe !important; color:#1d4ed8 !important; border-radius:4px !important; font-size:0.64rem !important; }
 .stProgress > div > div > div { border-radius:3px !important; }
 
 ::-webkit-scrollbar { width:3px; height:3px; }
 ::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:#1a2035; border-radius:2px; }
+::-webkit-scrollbar-thumb { background:#e2e8f0; border-radius:2px; }
 
 @media(max-width:640px){
     .block-container { padding:0.5rem 0.5rem 4.5rem !important; }
-    .top-bar { margin:-0.5rem -0.5rem 0.7rem; }
+    .top-bar { margin:-0.5rem -0.5rem 0.75rem; }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -236,7 +242,19 @@ MARKET_MAP = {
 }
 THRESHOLDS = {'btts':60,'over25':60,'over15':80,'under35':70,'under25':60,'second_half_more':60}
 
+# Moedas disponíveis
+CURRENCIES = {
+    'AOA': {'symbol': 'Kz', 'flag': '🇦🇴', 'name': 'Kwanza'},
+    'EUR': {'symbol': '€',  'flag': '🇪🇺', 'name': 'Euro'},
+    'BRL': {'symbol': 'R$', 'flag': '🇧🇷', 'name': 'Real'},
+    'USD': {'symbol': '$',  'flag': '🇺🇸', 'name': 'Dólar'},
+}
+
 # ── UTILS ─────────────────────────────────────────────────────────────────────
+def fmt_money(value, currency_key):
+    c = CURRENCIES.get(currency_key, CURRENCIES['EUR'])
+    return f"{c['symbol']}{value:,.2f}"
+
 def calculate_value_bet(real_prob, odd):
     if not odd or odd <= 0 or not real_prob: return None
     return round((odd * (real_prob / 100)) - 1, 3)
@@ -343,9 +361,9 @@ class Analisador:
     def ajustes_estilo(self, hp, ap):
         aj = {k:0 for k in MARKET_MAP}
         hs,as_ = hp['estilo'],ap['estilo']
-        if hs=='ofensivo' and as_=='ofensivo':   aj.update({'btts':8,'over25':12,'over15':5,'under35':-10,'under25':-8,'second_half_more':5})
+        if hs=='ofensivo' and as_=='ofensivo':     aj.update({'btts':8,'over25':12,'over15':5,'under35':-10,'under25':-8,'second_half_more':5})
         elif hs=='defensivo' and as_=='defensivo': aj.update({'btts':-10,'over25':-15,'over15':-5,'under35':12,'under25':10,'second_half_more':-5})
-        elif 'ofensivo' in [hs,as_]:             aj.update({'btts':3,'over25':2,'over15':2,'under35':-3,'under25':-2,'second_half_more':3})
+        elif 'ofensivo' in [hs,as_]:              aj.update({'btts':3,'over25':2,'over15':2,'under35':-3,'under25':-2,'second_half_more':3})
         if hp['ataque']>=8 and ap['defesa']<=5: aj['btts']+=5;aj['over25']+=8;aj['over15']+=4;aj['under35']-=6;aj['under25']-=5;aj['second_half_more']+=4
         if ap['ataque']>=8 and hp['defesa']<=5: aj['btts']+=5;aj['over25']+=8;aj['over15']+=4;aj['under35']-=6;aj['under25']-=5;aj['second_half_more']+=4
         return aj
@@ -367,12 +385,12 @@ class Analisador:
         def calc(b, k, lo, hi, h2=0): return min(hi, max(lo, b+aj[k]+ajc[k]+h2))
 
         probs = {
-            'btts':            calc((hp['btts']+ap['btts'])/2,           'btts',  15,85,(h2h['btts_h2h']-50)/10),
-            'over25':          calc((hp['over25']+ap['over25'])/2,        'over25',20,80,(h2h['over25_h2h']-50)/10),
-            'over15':          calc((hp['over15']+ap['over15'])/2,        'over15',40,95),
-            'under35':         calc((hp['under35']+ap['under35'])/2,      'under35',30,90),
-            'under25':         calc((hp['under25']+ap['under25'])/2,      'under25',25,85),
-            'second_half_more':calc((hp['second_half_more']+ap['second_half_more'])/2,'second_half_more',20,80)
+            'btts':             calc((hp['btts']+ap['btts'])/2,                          'btts',  15, 85, (h2h['btts_h2h']-50)/10),
+            'over25':           calc((hp['over25']+ap['over25'])/2,                       'over25',20, 80, (h2h['over25_h2h']-50)/10),
+            'over15':           calc((hp['over15']+ap['over15'])/2,                       'over15',40, 95),
+            'under35':          calc((hp['under35']+ap['under35'])/2,                     'under35',30, 90),
+            'under25':          calc((hp['under25']+ap['under25'])/2,                     'under25',25, 85),
+            'second_half_more': calc((hp['second_half_more']+ap['second_half_more'])/2,   'second_half_more',20,80)
         }
 
         res = {f'prob_{k}': round(v,1) for k,v in probs.items()}
@@ -383,7 +401,14 @@ class Analisador:
         res['detail_lines']  = self._lines(ht, at, hp, ap, h2h)
         res['recomendacoes'] = self._recs(probs, markets)
 
-        self.historico.append({'home':ht,'away':at,'prob_btts':res['prob_btts'],'prob_over25':res['prob_over25'],'mercado_escolhido':markets[0] if markets else '','mercados_todos':markets,'probs':{k:round(v,1) for k,v in probs.items()},'data':datetime.now().strftime('%Y-%m-%d %H:%M')})
+        self.historico.append({
+            'home': ht, 'away': at,
+            'prob_btts': res['prob_btts'], 'prob_over25': res['prob_over25'],
+            'mercado_escolhido': markets[0] if markets else '',
+            'mercados_todos': markets,
+            'probs': {k: round(v,1) for k,v in probs.items()},
+            'data': datetime.now().strftime('%Y-%m-%d %H:%M')
+        })
         st.session_state.historico = self.historico
         return res
 
@@ -431,21 +456,25 @@ class Analisador:
             st.success("📧 Alerta enviado!")
         except Exception as e: st.error(f"Erro email: {e}")
 
-    def gerar_pdf(self):
-        pdf = FPDF(); pdf.add_page(); pdf.set_font("Arial",size=11)
-        pdf.cell(200,9,"Relatorio de Analises - Bet Analyzer",ln=1,align='C'); pdf.ln(6)
+    def gerar_pdf(self, currency_key='EUR'):
+        c = CURRENCIES.get(currency_key, CURRENCIES['EUR'])
+        pdf = FPDF(); pdf.add_page(); pdf.set_font("Arial","B",size=12)
+        pdf.cell(200,9,f"Relatorio Bet Analyzer ({c['name']})",ln=1,align='C'); pdf.ln(5)
         pdf.set_font("Arial",size=9)
-        pdf.cell(200,6,f"Total de apostas: {len(self.historico)}",ln=1); pdf.ln(4)
+        pdf.cell(200,6,f"Total de apostas: {len(self.historico)}",ln=1); pdf.ln(3)
+        MMAP = {"btts":"BTTS","over25":"Over 2.5","over15":"Over 1.5","under35":"Under 3.5","under25":"Under 2.5","second_half_more":"2o Tempo+"}
         for a in list(reversed(self.historico))[-20:]:
             mkey   = a.get('mercado_escolhido','')
-            mlabel = {"btts":"BTTS","over25":"Over 2.5","over15":"Over 1.5","under35":"Under 3.5","under25":"Under 2.5","second_half_more":"2o Tempo+"}.get(mkey, mkey.upper())
+            mlabel = MMAP.get(mkey, mkey.upper())
             odd_ap = a.get('odd_apostada',0)
             ev     = a.get('ev',0)
+            stake  = a.get('stake',0)
             prob_m = a.get('probs',{}).get(mkey, a.get('prob_btts',0))
             pdf.set_font("Arial","B",size=9)
             pdf.cell(200,6,f"{a['home']} vs {a['away']}",ln=1)
             pdf.set_font("Arial",size=8)
-            pdf.cell(200,5,f"  Data: {a['data']}  |  Mercado: {mlabel}  |  Prob: {prob_m}%  |  Odd: {odd_ap:.2f}  |  EV: {ev:+.3f}",ln=1)
+            stake_str = f"{c['symbol']}{stake:.2f}" if stake else "-"
+            pdf.cell(200,5,f"  {a['data']}  |  {mlabel}  |  Prob: {prob_m}%  |  Odd: {odd_ap:.2f}  |  Stake: {stake_str}  |  EV: {ev:+.3f}",ln=1)
             pdf.ln(2)
         return pdf.output(dest='S')
 
@@ -457,7 +486,7 @@ def render_metric_grid(analise, markets):
         odd  = analise.get(f'odd_justa_{m}',0)
         c    = mc_cls(prob, THRESHOLDS.get(m,60))
         lbl  = MARKET_MAP.get(m,m)
-        tiles += f'<div class="metric-card {c}"><div class="mv">{prob:.0f}<span style="font-size:0.52em;font-weight:400;color:#334155">%</span></div><div class="ml">{lbl}</div><div class="mo">@ {odd}</div></div>'
+        tiles += f'<div class="metric-card {c}"><div class="mv">{prob:.0f}<span style="font-size:0.52em;font-weight:400;color:#cbd5e1">%</span></div><div class="ml">{lbl}</div><div class="mo">@ {odd}</div></div>'
     st.markdown(f'<div class="metric-grid">{tiles}</div>', unsafe_allow_html=True)
 
 def render_prob_bars(analise, markets):
@@ -488,19 +517,21 @@ def render_team_card(name, p, side):
     stats = ""
     for lbl,k in [("BTTS","btts"),("O2.5","over25"),("O1.5","over15")]:
         v = p.get(k,0)
-        c = "#4ade80" if v>=60 else "#fbbf24" if v>=45 else "#f87171"
+        c = "#16a34a" if v>=60 else "#d97706" if v>=45 else "#dc2626"
         stats += f'<span class="tc-stat" style="color:{c}">{lbl} {v}%</span>'
     st.markdown(f'<div class="team-card"><div class="tc-hdr"><span class="tc-name">{side} {name}</span><span class="tc-badge {sc}">{p["estilo"]}</span></div>{bars}<div class="tc-stats">{stats}</div></div>', unsafe_allow_html=True)
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
-    for k,v in [('last_analise',None),('last_match',None),('selected_comp',None)]:
+    for k,v in [('last_analise',None),('last_match',None),('selected_comp',None),('currency','EUR')]:
         if k not in st.session_state: st.session_state[k] = v
 
     an    = Analisador()
     comps = get_competitions()
+    curr  = st.session_state['currency']
+    c_info = CURRENCIES.get(curr, CURRENCIES['EUR'])
 
-    # TOP BAR
+    # ── TOP BAR ───────────────────────────────────────────────────────────────
     api_ok  = FOOTBALL_DATA_API_KEY != "DEFAULT_KEY"
     odds_ok = ODDS_API_KEY != "sua_chave_the_odds_api"
     d1 = "dot-g" if api_ok   else "dot-r"
@@ -510,8 +541,12 @@ def main():
     st.markdown(f"""
     <div class="top-bar">
         <span class="tb-icon">⚽</span>
-        <div><div class="tb-title">Bet Analyzer</div><div class="tb-sub">H2H · Value Bet · Alertas</div></div>
-        <div class="status-dots">
+        <div style="flex:1">
+            <div class="tb-title">Bet Analyzer</div>
+            <div class="tb-sub">H2H · Value Bet · Alertas</div>
+        </div>
+        <span class="currency-chip">{c_info['flag']} {curr} {c_info['symbol']}</span>
+        <div class="status-dots" style="margin-left:0.5rem">
             <div class="dot {d1}" title="Football API"></div>
             <div class="dot {d2}" title="Odds API"></div>
             <div class="dot {d3}" title="Email"></div>
@@ -524,17 +559,30 @@ def main():
     if st.session_state['selected_comp'] not in comps:
         st.session_state['selected_comp'] = list(comps.keys())[0]
 
-    # SIDEBAR
+    # ── SIDEBAR ───────────────────────────────────────────────────────────────
     selected_markets = ['btts','over25','over15','under35','second_half_more']
     with st.sidebar:
-        st.markdown('<div class="sb-title">⚙ Mercados</div>', unsafe_allow_html=True)
+        # ── Moeda ─────────────────────────────────────────────────────────────
+        st.markdown('<div class="sb-title">💱 Moeda</div>', unsafe_allow_html=True)
+        currency_opts = [f"{v['flag']} {k} — {v['name']}" for k, v in CURRENCIES.items()]
+        curr_keys     = list(CURRENCIES.keys())
+        curr_idx      = curr_keys.index(curr) if curr in curr_keys else 0
+        sel_currency  = st.selectbox("Moeda", currency_opts, index=curr_idx, key="currency_sel", label_visibility="collapsed")
+        new_curr      = curr_keys[currency_opts.index(sel_currency)]
+        if new_curr != st.session_state['currency']:
+            st.session_state['currency'] = new_curr
+            st.rerun()
+
+        # ── Mercados ──────────────────────────────────────────────────────────
+        st.markdown('<div class="sb-title" style="margin-top:0.6rem">⚙ Mercados</div>', unsafe_allow_html=True)
         default_d = ['BTTS','Over 2.5','Over 1.5','Under 3.5','2º Tempo +']
         rev_map   = {v:k for k,v in MARKET_MAP.items()}
         sel_disp  = st.multiselect("Mercados", list(MARKET_MAP.values()), default=[m for m in default_d if m in MARKET_MAP.values()])
         selected_markets = [rev_map[m] for m in sel_disp]
         st.selectbox("Filtro",["Todos","🔥 Value Bet","🛡️ Baixo Risco (>70%)"])
 
-        st.markdown('<div class="sb-title" style="margin-top:0.55rem">📋 Watchlist</div>', unsafe_allow_html=True)
+        # ── Watchlist ─────────────────────────────────────────────────────────
+        st.markdown('<div class="sb-title" style="margin-top:0.6rem">📋 Watchlist</div>', unsafe_allow_html=True)
         new_m = st.text_input("Adicionar", placeholder="Arsenal vs Chelsea", key="nmi")
         if st.button("＋ Adicionar") and new_m:
             an.watchlist.append(new_m); st.session_state.watchlist = an.watchlist; st.rerun()
@@ -544,9 +592,10 @@ def main():
             if c2.button("✕",key=f"r{i}"):
                 an.watchlist.pop(i); st.session_state.watchlist = an.watchlist; st.rerun()
         if not an.watchlist:
-            st.markdown('<div style="font-size:0.61rem;color:#1e3a5f">Lista vazia</div>', unsafe_allow_html=True)
+            st.markdown('<div style="font-size:0.62rem;color:#94a3b8;padding:0.2rem 0">Lista vazia</div>', unsafe_allow_html=True)
 
-        st.markdown('<div class="sb-title" style="margin-top:0.55rem">📧 Alertas</div>', unsafe_allow_html=True)
+        # ── Alertas ───────────────────────────────────────────────────────────
+        st.markdown('<div class="sb-title" style="margin-top:0.6rem">📧 Alertas</div>', unsafe_allow_html=True)
         email_to = st.text_input("Email", value="seu@email.com", key="em_sb")
         if st.button("Enviar Alertas"):
             for ms in an.watchlist:
@@ -555,10 +604,12 @@ def main():
                     an.send_alert({'home_team':h,'away_team':a,'date':datetime.now()},{'prob_btts':65,'prob_over25':70},email_to)
                 except Exception as e: st.error(f"{e}")
 
-    # TABS
+    # ── TABS ──────────────────────────────────────────────────────────────────
     tab1, tab2, tab3 = st.tabs(["🔍 Análise", "📊 Perfis", "📈 Histórico"])
 
-    # ══ TAB 1 ════════════════════════════════════════════════
+    # ══════════════════════════════════════════════════════════
+    # TAB 1 — ANÁLISE
+    # ══════════════════════════════════════════════════════════
     with tab1:
         col_comp, col_match = st.columns([1,2])
 
@@ -593,42 +644,44 @@ def main():
                 sel_match = opts[[o["disp"] for o in opts].index(sel_str)]
 
         if sel_match:
-            # ── Seletor de mercado por jogo ───────────────────
             st.markdown('<hr class="divider">', unsafe_allow_html=True)
+
+            # ── Seletor de mercado + aposta ───────────────────────────────────
             st.markdown('<span class="sec-label">Mercado desta Aposta</span>', unsafe_allow_html=True)
             mc1, mc2, mc3 = st.columns([2,1,1])
             with mc1:
-                mercado_jogo_disp = st.selectbox(
-                    "Mercado principal",
-                    options=list(MARKET_MAP.values()),
-                    key='mercado_jogo_sel',
-                    label_visibility="collapsed"
-                )
+                mercado_jogo_disp = st.selectbox("Mercado principal", options=list(MARKET_MAP.values()),
+                                                  key='mercado_jogo_sel', label_visibility="collapsed")
                 mercado_jogo = {v:k for k,v in MARKET_MAP.items()}[mercado_jogo_disp]
             with mc2:
-                odd_apostada = st.number_input("Odd apostada", min_value=1.01, value=2.00, step=0.05, format="%.2f", key="odd_aposta_input")
+                odd_apostada = st.number_input("Odd apostada", min_value=1.01, value=2.00, step=0.05, format="%.2f", key="odd_input")
             with mc3:
-                stake = st.number_input("Stake (€)", min_value=1.0, value=10.0, step=1.0, format="%.0f", key="stake_input")
+                stake = st.number_input(f"Stake ({c_info['symbol']})", min_value=0.0, value=10.0, step=1.0, format="%.2f", key="stake_input")
 
-            # Mostrar EV rápido antes de analisar
+            # Preview EV em tempo real (se já houver análise anterior)
             if st.session_state.get('last_analise'):
                 prob_prev = st.session_state['last_analise'].get(f'prob_{mercado_jogo}', 0)
                 ev_prev   = calculate_value_bet(prob_prev, odd_apostada) or 0
-                retorno   = round(stake * odd_apostada, 2)
-                ec_prev   = "#4ade80" if ev_prev > 0.05 else "#fbbf24" if ev_prev > 0 else "#f87171"
+                retorno   = stake * odd_apostada
+                lucro     = retorno - stake
+                ev_c = "#16a34a" if ev_prev > 0.05 else "#d97706" if ev_prev > 0 else "#dc2626"
                 st.markdown(f"""
-                <div style="display:flex;gap:0.5rem;margin-top:0.3rem;flex-wrap:wrap">
-                    <div class="ev-box" style="flex:1;min-width:80px">
-                        <div class="ev-val" style="color:{ec_prev}">{ev_prev:.3f}</div>
-                        <div class="ev-lbl" style="color:{ec_prev}">Expected Value</div>
+                <div style="display:flex;gap:0.45rem;margin-top:0.35rem;flex-wrap:wrap">
+                    <div class="ev-box" style="flex:1;min-width:75px">
+                        <div class="ev-val" style="color:{ev_c}">{ev_prev:+.3f}</div>
+                        <div class="ev-lbl">Expected Value</div>
                     </div>
-                    <div class="ev-box" style="flex:1;min-width:80px">
-                        <div class="ev-val" style="color:#60a5fa">{prob_prev:.0f}%</div>
-                        <div class="ev-lbl" style="color:#475569">Prob. Modelo</div>
+                    <div class="ev-box" style="flex:1;min-width:75px">
+                        <div class="ev-val" style="color:#2563eb">{prob_prev:.0f}%</div>
+                        <div class="ev-lbl">Prob. Modelo</div>
                     </div>
-                    <div class="ev-box" style="flex:1;min-width:80px">
-                        <div class="ev-val" style="color:#a78bfa">€{retorno:.2f}</div>
-                        <div class="ev-lbl" style="color:#475569">Retorno Potencial</div>
+                    <div class="ev-box" style="flex:1;min-width:75px">
+                        <div class="ev-val" style="color:#7c3aed">{fmt_money(retorno, curr)}</div>
+                        <div class="ev-lbl">Retorno</div>
+                    </div>
+                    <div class="ev-box" style="flex:1;min-width:75px">
+                        <div class="ev-val" style="color:{'#16a34a' if lucro>=0 else '#dc2626'}">{fmt_money(lucro, curr)}</div>
+                        <div class="ev-lbl">Lucro</div>
                     </div>
                 </div>""", unsafe_allow_html=True)
 
@@ -636,26 +689,26 @@ def main():
             if st.button("🚀 Analisar Partida", use_container_width=True):
                 with st.spinner(f"Analisando {sel_match['home_team']} vs {sel_match['away_team']}…"):
                     try:
-                        # Garante que o mercado escolhido está sempre nos mercados analisados
                         markets_to_use = list(set(selected_markets + [mercado_jogo]))
                         res = an.analisar(sel_match['home_team'],sel_match['away_team'],sel_comp,
                                           sel_match['home_id'],sel_match['away_id'],comp_id,markets_to_use)
                         res['mercado_escolhido'] = mercado_jogo
-                        res['odd_apostada']     = odd_apostada
-                        res['stake']            = stake
-                        # Sobrescreve o mercado no histórico com o escolhido pelo utilizador
+                        res['odd_apostada']      = odd_apostada
+                        res['stake']             = stake
+                        res['currency']          = curr
                         if an.historico:
                             an.historico[-1]['mercado_escolhido'] = mercado_jogo
-                            an.historico[-1]['odd_apostada']     = odd_apostada
-                            an.historico[-1]['stake']            = stake
-                            an.historico[-1]['ev']               = round(calculate_value_bet(
+                            an.historico[-1]['odd_apostada']      = odd_apostada
+                            an.historico[-1]['stake']             = stake
+                            an.historico[-1]['currency']          = curr
+                            an.historico[-1]['ev'] = round(calculate_value_bet(
                                 an.historico[-1]['probs'].get(mercado_jogo, 50), odd_apostada) or 0, 3)
                             st.session_state.historico = an.historico
                         st.session_state['last_analise'] = res
                         st.session_state['last_match']   = sel_match
-                        st.session_state['last_mercado'] = mercado_jogo
                     except Exception as e: st.error(f"Erro: {e}")
 
+        # ── Resultados ────────────────────────────────────────────────────────
         if st.session_state['last_analise']:
             analise = st.session_state['last_analise']
             match   = st.session_state['last_match']
@@ -708,8 +761,8 @@ def main():
                             or_  = st.number_input(lbl,min_value=1.01,value=float(oj),step=0.01,format="%.2f",key=f"vi_{mkt}")
                             ev   = calculate_value_bet(prob,or_) or 0
                             el   = "✅ VALUE" if ev>0.05 else "✓ Pequeno" if ev>0 else "✗ Sem Value"
-                            ec   = "#4ade80" if ev>0.05 else "#fbbf24" if ev>0 else "#475569"
-                            st.markdown(f'<div class="ev-box"><div class="ev-val" style="color:{ec}">{ev:.3f}</div><div class="ev-lbl" style="color:{ec}">{el}</div></div>', unsafe_allow_html=True)
+                            ec   = "#16a34a" if ev>0.05 else "#d97706" if ev>0 else "#94a3b8"
+                            st.markdown(f'<div class="ev-box"><div class="ev-val" style="color:{ec}">{ev:+.3f}</div><div class="ev-lbl">{el}</div></div>', unsafe_allow_html=True)
                 else: st.info("Selecione mercados.")
 
             lo = an.fetch_live_odds(match['home_team'], match['away_team'])
@@ -721,9 +774,11 @@ def main():
                         if mt:
                             ov = next((o['price'] for o in mt['outcomes'] if o.get('point')==2.5 and o.get('name')=='Over'),'N/A')
                             un = next((o['price'] for o in mt['outcomes'] if o.get('point')==2.5 and o.get('name')=='Under'),'N/A')
-                            st.markdown(f'<div class="analysis-card" style="padding:0.52rem 0.75rem"><span style="font-size:0.69rem">Over 2.5 <b style="color:#60a5fa">@{ov}</b> &nbsp; Under 2.5 <b style="color:#60a5fa">@{un}</b></span></div>', unsafe_allow_html=True)
+                            st.markdown(f'<div class="analysis-card" style="padding:0.52rem 0.75rem"><span style="font-size:0.7rem">Over 2.5 <b style="color:#2563eb">@{ov}</b> &nbsp; Under 2.5 <b style="color:#2563eb">@{un}</b></span></div>', unsafe_allow_html=True)
 
-    # ══ TAB 2 ════════════════════════════════════════════════
+    # ══════════════════════════════════════════════════════════
+    # TAB 2 — PERFIS
+    # ══════════════════════════════════════════════════════════
     with tab2:
         if st.session_state['last_match']:
             m_  = st.session_state['last_match']
@@ -741,64 +796,54 @@ def main():
 
             fig = go.Figure()
             for name,vals,color,fill in [
-                (m_['home_team'],hv,'#3b82f6','rgba(59,130,246,0.12)'),
-                (m_['away_team'],av,'#f97316','rgba(249,115,22,0.12)')
+                (m_['home_team'],hv,'#2563eb','rgba(37,99,235,0.10)'),
+                (m_['away_team'],av,'#ea580c','rgba(234,88,12,0.10)')
             ]:
-                fig.add_trace(go.Scatterpolar(r=vals+[vals[0]],theta=cats+[cats[0]],fill='toself',name=name,line=dict(color=color,width=2),fillcolor=fill))
+                fig.add_trace(go.Scatterpolar(r=vals+[vals[0]],theta=cats+[cats[0]],fill='toself',name=name,
+                                               line=dict(color=color,width=2),fillcolor=fill))
             fig.update_layout(
-                polar=dict(bgcolor="#0b0e1a",
-                           radialaxis=dict(visible=True,range=[0,100],gridcolor="#1a2035",tickfont=dict(size=8,color="#334155")),
-                           angularaxis=dict(gridcolor="#1a2035",tickfont=dict(size=9,color="#64748b"))),
-                paper_bgcolor="#060810",
+                polar=dict(bgcolor="#ffffff",
+                           radialaxis=dict(visible=True,range=[0,100],gridcolor="#e2e8f0",tickfont=dict(size=8,color="#94a3b8")),
+                           angularaxis=dict(gridcolor="#e2e8f0",tickfont=dict(size=9,color="#64748b"))),
+                paper_bgcolor="#f8fafc",
                 font=dict(family="Inter",color="#64748b"),
-                legend=dict(font=dict(size=10,color="#64748b"),bgcolor="rgba(0,0,0,0)",orientation="h",x=0.5,xanchor="center",y=-0.08),
-                margin=dict(l=20,r=20,t=20,b=40), height=280
+                legend=dict(font=dict(size=10,color="#475569"),bgcolor="rgba(0,0,0,0)",orientation="h",x=0.5,xanchor="center",y=-0.08),
+                margin=dict(l=20,r=20,t=20,b=40), height=290
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("⚠️ Analise uma partida primeiro.")
 
-    # ══ TAB 3 ════════════════════════════════════════════════
+    # ══════════════════════════════════════════════════════════
+    # TAB 3 — HISTÓRICO
+    # ══════════════════════════════════════════════════════════
     with tab3:
         if an.historico:
             hist_sorted = list(reversed(an.historico))
 
-            # ── Filtros ──────────────────────────────────────
+            # Filtros
             fa, fb, fc = st.columns([2,2,1])
             with fa:
-                filtro_mercado = st.selectbox(
-                    "Filtrar por mercado",
-                    ["Todos"] + list(MARKET_MAP.values()),
-                    key="hist_filtro_mercado",
-                    label_visibility="collapsed"
-                )
+                filtro_mercado = st.selectbox("Filtrar mercado",["Todos"]+list(MARKET_MAP.values()),
+                                               key="hist_fm",label_visibility="collapsed")
             with fb:
-                filtro_ev = st.selectbox(
-                    "Filtrar por EV",
-                    ["Todos", "✅ Com Value (EV > 0)", "🔥 EV Forte (> 0.05)", "✗ Sem Value"],
-                    key="hist_filtro_ev",
-                    label_visibility="collapsed"
-                )
+                filtro_ev = st.selectbox("Filtrar EV",
+                    ["Todos","✅ Com Value (EV > 0)","🔥 EV Forte (> 0.05)","✗ Sem Value"],
+                    key="hist_fev",label_visibility="collapsed")
             with fc:
-                if st.button("🗑 Limpar", key="hist_clear"):
-                    st.session_state.historico = []
-                    an.historico.clear()
-                    st.rerun()
+                if st.button("🗑 Limpar",key="hist_clear"):
+                    st.session_state.historico = []; an.historico.clear(); st.rerun()
 
             st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
-            # ── Cards de histórico ────────────────────────────
-            icons_m = {'btts':'🎯','over25':'⚽','over15':'⚽','under35':'🛡️','under25':'🛡️','second_half_more':'⏱️'}
-            rev_map_hist = {v:k for k,v in MARKET_MAP.items()}
+            icons_m  = {'btts':'🎯','over25':'⚽','over15':'⚽','under35':'🛡️','under25':'🛡️','second_half_more':'⏱️'}
+            rev_map_h = {v:k for k,v in MARKET_MAP.items()}
 
             filtered = []
             for entry in hist_sorted:
                 mkey = entry.get('mercado_escolhido','')
                 ev   = entry.get('ev', 0)
-                # filtro mercado
-                if filtro_mercado != "Todos":
-                    if mkey != rev_map_hist.get(filtro_mercado, mkey): continue
-                # filtro ev
+                if filtro_mercado != "Todos" and mkey != rev_map_h.get(filtro_mercado,mkey): continue
                 if filtro_ev == "✅ Com Value (EV > 0)" and ev <= 0: continue
                 if filtro_ev == "🔥 EV Forte (> 0.05)" and ev <= 0.05: continue
                 if filtro_ev == "✗ Sem Value" and ev > 0: continue
@@ -807,28 +852,26 @@ def main():
             if not filtered:
                 st.info("Nenhuma aposta encontrada com esses filtros.")
             else:
-                # ── Resumo de topo ────────────────────────────
                 total     = len(filtered)
                 com_value = sum(1 for e in filtered if e.get('ev',0) > 0)
-                ev_medio  = round(sum(e.get('ev',0) for e in filtered) / total, 3) if total else 0
+                ev_medio  = round(sum(e.get('ev',0) for e in filtered)/total,3) if total else 0
                 stake_tot = sum(e.get('stake',0) for e in filtered)
 
                 sm1,sm2,sm3,sm4 = st.columns(4)
-                for col, lbl, val, c in [
-                    (sm1, "APOSTAS", str(total),        "#93c5fd"),
-                    (sm2, "COM VALUE", f"{com_value}/{total}", "#4ade80"),
-                    (sm3, "EV MÉDIO",  f"{ev_medio:.3f}", "#4ade80" if ev_medio>0 else "#f87171"),
-                    (sm4, "STAKE TOT", f"€{stake_tot:.0f}", "#a78bfa"),
+                for col,lbl,val,c in [
+                    (sm1,"APOSTAS",str(total),"#2563eb"),
+                    (sm2,"COM VALUE",f"{com_value}/{total}","#16a34a"),
+                    (sm3,"EV MÉDIO",f"{ev_medio:+.3f}","#16a34a" if ev_medio>0 else "#dc2626"),
+                    (sm4,"STAKE",fmt_money(stake_tot,curr),"#7c3aed"),
                 ]:
                     col.markdown(f"""
-                    <div class="metric-card" style="border-color:#1a2035;margin-bottom:0.6rem">
+                    <div class="metric-card" style="margin-bottom:0.65rem">
                         <div class="mv" style="color:{c};font-size:1.1rem">{val}</div>
                         <div class="ml">{lbl}</div>
                     </div>""", unsafe_allow_html=True)
 
                 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
-                # ── Lista de cards ────────────────────────────
                 for entry in filtered:
                     mkey    = entry.get('mercado_escolhido','btts')
                     mlabel  = MARKET_MAP.get(mkey, mkey)
@@ -836,47 +879,48 @@ def main():
                     ev      = entry.get('ev', 0)
                     odd_ap  = entry.get('odd_apostada', 0)
                     stake_e = entry.get('stake', 0)
-                    retorno = round(stake_e * odd_ap, 2) if odd_ap else 0
+                    entry_curr = entry.get('currency', curr)
+                    retorno = stake_e * odd_ap if odd_ap else 0
+                    lucro   = retorno - stake_e
                     probs   = entry.get('probs', {})
-                    prob_m  = probs.get(mkey, entry.get('prob_btts', 0))
+                    prob_m  = probs.get(mkey, entry.get('prob_btts',0))
 
-                    # Cores EV
-                    if ev > 0.05:  ev_cls,ev_c = "hm-g","#4ade80"
-                    elif ev > 0:   ev_cls,ev_c = "hm-y","#fbbf24"
-                    else:          ev_cls,ev_c = "hm-r","#f87171"
+                    if ev > 0.05:  ev_cls,ev_c = "hm-g","#16a34a"
+                    elif ev > 0:   ev_cls,ev_c = "hm-y","#d97706"
+                    else:          ev_cls,ev_c = "hm-r","#dc2626"
 
-                    # Mini pills dos outros mercados
                     mini_pills = ""
-                    for k, v in probs.items():
+                    for k,v in probs.items():
                         if k == mkey: continue
-                        t  = THRESHOLDS.get(k, 60)
+                        t  = THRESHOLDS.get(k,60)
                         pc = "pill-g" if v>=t else "pill-y" if v>=t-10 else "pill-s"
                         mini_pills += f'<span class="hist-mini-pill {pc}">{MARKET_MAP.get(k,k)} {v:.0f}%</span>'
 
-                    retorno_html = f'<span style="font-size:0.62rem;color:#a78bfa;font-family:JetBrains Mono,monospace">€{retorno:.2f}</span>' if odd_ap else ''
-                    odd_html     = f'<span style="font-size:0.62rem;color:#60a5fa;font-family:JetBrains Mono,monospace">@ {odd_ap:.2f}</span>' if odd_ap else ''
+                    stake_html  = f'<span style="font-size:0.62rem;color:#7c3aed;font-family:JetBrains Mono,monospace">{fmt_money(stake_e, entry_curr)}</span>' if stake_e else ''
+                    odd_html    = f'<span style="font-size:0.62rem;color:#2563eb;font-family:JetBrains Mono,monospace">@ {odd_ap:.2f}</span>' if odd_ap else ''
+                    lucro_c     = "#16a34a" if lucro >= 0 else "#dc2626"
+                    lucro_html  = f'<span style="font-size:0.62rem;color:{lucro_c};font-family:JetBrains Mono,monospace">{fmt_money(lucro, entry_curr)}</span>' if odd_ap else ''
 
                     st.markdown(f"""
                     <div class="hist-card">
                         <div class="hist-card-left">
-                            <div class="hist-match">🏠 {entry['home']} <span style="color:#334155;font-weight:400">vs</span> 🚩 {entry['away']}</div>
+                            <div class="hist-match">🏠 {entry['home']} <span style="color:#94a3b8;font-weight:400">vs</span> 🚩 {entry['away']}</div>
                             <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.22rem;flex-wrap:wrap">
                                 <span class="hist-date">{entry['data']}</span>
-                                {odd_html}
-                                {retorno_html}
+                                {odd_html}{stake_html}{lucro_html}
                             </div>
                             <div class="hist-pills">{mini_pills}</div>
                         </div>
                         <div class="hist-right">
                             <span class="hist-market {ev_cls}">{micon} {mlabel}</span>
                             <span class="hist-prob">{prob_m:.0f}% prob</span>
-                            <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;font-weight:700;color:{ev_c}">EV {ev:+.3f}</span>
+                            <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;font-weight:700;color:{ev_c}">EV {ev:+.3f}</span>
                         </div>
                     </div>""", unsafe_allow_html=True)
 
                 st.markdown('<hr class="divider">', unsafe_allow_html=True)
-                pdf_b = an.gerar_pdf()
-                st.download_button("⬇️ Exportar PDF", data=pdf_b, file_name="relatorio.pdf", mime="application/pdf")
+                pdf_b = an.gerar_pdf(curr)
+                st.download_button("⬇️ Exportar PDF", data=pdf_b, file_name="relatorio_bets.pdf", mime="application/pdf")
         else:
             st.info("Histórico vazio. Analise uma partida para popular.")
 
