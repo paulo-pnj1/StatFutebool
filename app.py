@@ -1,13 +1,9 @@
 import streamlit as st
 import requests
 import pandas as pd
-import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
-import smtplib
-from email.mime.text import MIMEText as MimeText
-from email.mime.multipart import MIMEMultipart as MimeMultipart
 from fpdf import FPDF
 import time
 
@@ -20,1037 +16,817 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ── CSS PARA EXPERIÊNCIA INCRÍVEL ────────────────────────────────────────────
 st.markdown("""
 <style>
-/* IMPORTAÇÃO DE FONTES MODERNAS */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
-/* RESET E ESTILOS BASE */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body, .stApp {
-    font-family: 'Space Grotesk', sans-serif;
-    background: #0a0a0f;
-    color: #ffffff;
+    font-family: 'DM Sans', sans-serif;
+    background: #f5f4f0;
+    color: #1a1a1a;
 }
 
-/* REMOVER ELEMENTOS PADRÃO */
 #MainMenu, footer, header, .stDeployButton,
 [data-testid="collapsedControl"],
 [data-testid="stStatusWidget"],
 .stActionButton,
-div[data-testid="stDecoration"] {
-    display: none !important;
-}
+div[data-testid="stDecoration"] { display: none !important; }
 
-/* CONTAINER PRINCIPAL */
 .block-container {
     padding: 0 !important;
     max-width: 100% !important;
 }
 
-/* TOP BAR */
-.top-bar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+/* ── NAV ── */
+.nav-wrap {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.8rem 2rem;
-    background: rgba(10, 10, 15, 0.95);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 75, 75, 0.2);
+    padding: 1rem 2.5rem;
+    background: #fff;
+    border-bottom: 1px solid #e8e6e0;
 }
-
-.logo-area {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-}
-
-.logo-icon {
-    font-size: 2rem;
-    background: linear-gradient(135deg, #ff4b4b, #ff8c8c);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.logo-text {
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #ffffff, #ff4b4b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* BOTÕES DE NAVEGAÇÃO */
-.stButton button {
-    border-radius: 30px !important;
-    font-weight: 500 !important;
-    transition: all 0.2s ease !important;
-}
-
-.stButton button[kind="primary"] {
-    background: linear-gradient(135deg, #ff4b4b, #ff6b6b) !important;
-    color: white !important;
-    border: none !important;
-}
-
-.stButton button[kind="secondary"] {
-    background: rgba(255, 255, 255, 0.03) !important;
-    color: #a0a0b0 !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-}
-
-.stButton button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 75, 75, 0.3);
-}
-
-/* STATUS AREA */
-.status-area {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.currency-badge {
+.nav-logo {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #1a1a1a;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.4rem 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 0.9rem;
 }
-
-.status-dots {
+.nav-logo span { color: #2d6a4f; }
+.nav-status {
     display: flex;
-    gap: 0.4rem;
-    padding: 0.4rem 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 30px;
-}
-
-.dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-}
-
-.dot-green { background: #4cd964; box-shadow: 0 0 10px #4cd964; }
-.dot-yellow { background: #ffcc00; box-shadow: 0 0 10px #ffcc00; }
-.dot-red { background: #ff3b30; box-shadow: 0 0 10px #ff3b30; }
-
-/* QUICK ACTIONS */
-.quick-actions {
-    display: flex;
-    gap: 0.8rem;
-    padding: 1rem 2rem;
-    background: rgba(20, 20, 30, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    overflow-x: auto;
-}
-
-.quick-action {
-    padding: 0.6rem 1.2rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 30px;
-    color: #a0a0b0;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-}
-
-.quick-action:hover {
-    background: rgba(255, 75, 75, 0.1);
-    border-color: rgba(255, 75, 75, 0.3);
-    color: #ffffff;
-}
-
-.quick-action.active {
-    background: linear-gradient(135deg, #ff4b4b, #ff6b6b);
-    color: #ffffff;
-    border: none;
-}
-
-/* MAIN CONTENT */
-.main-content {
-    padding: 2rem;
-    min-height: calc(100vh - 140px);
-}
-
-/* SELECTOR CARD */
-.selector-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-/* MATCH GRID */
-.match-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.match-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 1.2rem;
-    transition: all 0.2s ease;
-}
-
-.match-card:hover {
-    background: rgba(255, 75, 75, 0.05);
-    border-color: rgba(255, 75, 75, 0.2);
-    transform: translateY(-2px);
-}
-
-.match-card.selected {
-    background: rgba(255, 75, 75, 0.1);
-    border-color: #ff4b4b;
-    box-shadow: 0 0 20px rgba(255, 75, 75, 0.2);
-}
-
-.match-teams {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.8rem;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: #888;
+}
+.dot {
+    width: 7px; height: 7px; border-radius: 50%; display: inline-block;
+}
+.dot-on  { background: #52b788; }
+.dot-off { background: #e07a5f; }
+.dot-warn{ background: #f2c94c; }
+
+/* ── TABS ── */
+.stButton button {
+    border-radius: 8px !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.88rem !important;
+    font-weight: 500 !important;
+    transition: all 0.15s ease !important;
+    padding: 0.5rem 1rem !important;
+    border: 1px solid #e8e6e0 !important;
+}
+.stButton button[kind="primary"] {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    border-color: #1a1a1a !important;
+}
+.stButton button[kind="secondary"] {
+    background: #fff !important;
+    color: #555 !important;
+}
+.stButton button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
 }
 
-.match-team {
+/* ── CONTENT WRAPPER ── */
+.content {
+    padding: 2rem 2.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ── SECTION TITLE ── */
+.section-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 0.75rem;
+}
+
+/* ── MATCH CARD ── */
+.match-card {
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+.match-card:hover {
+    border-color: #2d6a4f;
+    box-shadow: 0 2px 12px rgba(45,106,79,0.1);
+}
+.match-card.active {
+    border-color: #2d6a4f;
+    background: #f0faf5;
+}
+.match-teams {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    margin-bottom: 0.35rem;
+}
+.match-meta {
+    font-size: 0.78rem;
+    color: #999;
+    font-family: 'DM Mono', monospace;
+}
+
+/* ── ANALYSIS CARD ── */
+.analysis-wrap {
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+.analysis-title {
     font-size: 1rem;
     font-weight: 600;
-    color: #ffffff;
-}
-
-.match-vs {
-    color: #ff4b4b;
-    font-weight: 700;
-    font-size: 0.9rem;
-}
-
-.match-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 0.8rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.match-time {
-    font-size: 0.8rem;
-    color: #a0a0b0;
-    font-family: 'JetBrains Mono', monospace;
-}
-
-.match-badge {
-    padding: 0.2rem 0.8rem;
-    background: rgba(255, 75, 75, 0.1);
-    border-radius: 20px;
-    font-size: 0.7rem;
-    color: #ff4b4b;
-}
-
-/* RESULT CARD */
-.result-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 24px;
-    padding: 1.5rem;
-    margin-top: 1rem;
-}
-
-.result-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     margin-bottom: 1.5rem;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.analysis-title .badge {
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: #e8f5ee;
+    color: #2d6a4f;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
 }
 
-.result-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #ffffff;
-}
-
-.result-badge {
-    padding: 0.3rem 1rem;
-    background: rgba(255, 75, 75, 0.1);
-    border-radius: 30px;
-    font-size: 0.8rem;
-    color: #ff4b4b;
-}
-
-/* METRIC GRID */
-.metric-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.metric-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 1rem;
-    text-align: center;
-}
-
-.metric-card .value {
-    font-size: 2rem;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    margin-bottom: 0.3rem;
-}
-
-.metric-card .label {
-    font-size: 0.8rem;
-    color: #a0a0b0;
-}
-
-/* PROBABILITY METER */
-.prob-meter {
+/* ── PROB ROW ── */
+.prob-row {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.9rem;
 }
-
-.meter-label {
-    width: 100px;
-    font-size: 0.9rem;
-    color: #a0a0b0;
+.prob-label {
+    width: 110px;
+    font-size: 0.85rem;
+    color: #555;
+    flex-shrink: 0;
 }
-
-.meter-bar {
+.prob-track {
     flex: 1;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
+    height: 6px;
+    background: #f0ede8;
+    border-radius: 99px;
     overflow: hidden;
 }
-
-.meter-fill {
+.prob-fill {
     height: 100%;
-    border-radius: 4px;
-    transition: width 0.3s ease;
+    border-radius: 99px;
+    transition: width 0.4s ease;
 }
-
-.meter-fill.high { background: linear-gradient(90deg, #4cd964, #34c759); }
-.meter-fill.medium { background: linear-gradient(90deg, #ffcc00, #ffb347); }
-.meter-fill.low { background: linear-gradient(90deg, #ff3b30, #ff4b4b); }
-
-.meter-value {
-    width: 50px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
-    color: #ffffff;
+.fill-hi  { background: #52b788; }
+.fill-mid { background: #f2c94c; }
+.fill-lo  { background: #e07a5f; }
+.prob-val {
+    width: 42px;
     text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: #1a1a1a;
+}
+.prob-odd {
+    width: 60px;
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: #999;
 }
 
-/* QUICK BET PANEL */
-.quick-bet-panel {
-    position: fixed;
-    bottom: 2rem;
-    left: 2rem;
-    right: 2rem;
-    background: rgba(20, 20, 30, 0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 75, 75, 0.2);
-    border-radius: 40px;
-    padding: 1rem 2rem;
+/* ── METRIC CHIPS ── */
+.chips {
     display: flex;
-    align-items: center;
-    gap: 2rem;
-    z-index: 100;
-    animation: slideUp 0.3s ease;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
 }
-
-@keyframes slideUp {
-    from { transform: translateY(100px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+.chip {
+    background: #f5f4f0;
+    border: 1px solid #e8e6e0;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    text-align: center;
+    min-width: 90px;
 }
-
-.quick-bet-info {
-    flex: 1;
-}
-
-.quick-bet-match {
-    font-size: 1rem;
+.chip-val {
+    font-size: 1.4rem;
     font-weight: 600;
-    color: #ffffff;
+    font-family: 'DM Mono', monospace;
+    color: #1a1a1a;
+    line-height: 1;
     margin-bottom: 0.2rem;
 }
-
-.quick-bet-market {
-    font-size: 0.8rem;
-    color: #ff4b4b;
+.chip-lbl {
+    font-size: 0.7rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.quick-bet-inputs {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+/* ── PROFILE CARD ── */
+.profile-card {
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 12px;
+    padding: 1.25rem;
 }
-
-.quick-bet-input {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 30px;
-    padding: 0.6rem 1rem;
-    color: #ffffff;
-    font-size: 0.9rem;
-    min-width: 100px;
-}
-
-.quick-bet-button {
-    background: linear-gradient(135deg, #ff4b4b, #ff6b6b);
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 0.6rem 2rem;
+.profile-name {
     font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
 }
-
-.quick-bet-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 75, 75, 0.4);
-}
-
-/* RESPONSIVIDADE */
-@media (max-width: 768px) {
-    .top-bar { padding: 0.6rem 1rem; }
-    .logo-text { font-size: 1.2rem; }
-    .quick-actions { padding: 0.8rem 1rem; }
-    .main-content { padding: 1rem; }
-    .match-grid { grid-template-columns: 1fr; }
-    .metric-grid { grid-template-columns: 1fr; }
-    .quick-bet-panel { 
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-    }
-    .quick-bet-inputs { width: 100%; }
-}
-
-/* ANIMAÇÕES */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-    animation: fadeIn 0.3s ease;
-}
-
-/* STREAMLIT OVERRIDES */
-.stSelectbox, .stMultiSelect, .stNumberInput {
+.profile-style {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
     margin-bottom: 1rem;
 }
+.style-off { background: #fff0ec; color: #e07a5f; }
+.style-def { background: #eef4ff; color: #4a86e8; }
+.style-eq  { background: #f5f4f0; color: #888; }
 
-.stSelectbox > div > div {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px !important;
-    color: white !important;
+/* ── HISTORY ── */
+.hist-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
 }
+.hist-match { font-weight: 500; font-size: 0.9rem; }
+.hist-date  { font-size: 0.78rem; color: #999; font-family: 'DM Mono', monospace; }
 
+/* ── STREAMLIT OVERRIDES ── */
+.stSelectbox > div > div,
+.stMultiSelect > div > div {
+    background: #fff !important;
+    border: 1px solid #e8e6e0 !important;
+    border-radius: 10px !important;
+    font-family: 'DM Sans', sans-serif !important;
+    color: #1a1a1a !important;
+    font-size: 0.88rem !important;
+}
+.stNumberInput input {
+    background: #fff !important;
+    border: 1px solid #e8e6e0 !important;
+    border-radius: 10px !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.9rem !important;
+}
 .stAlert {
-    background: rgba(255, 75, 75, 0.1) !important;
-    border: 1px solid rgba(255, 75, 75, 0.2) !important;
-    color: white !important;
+    background: #f0faf5 !important;
+    border: 1px solid #b7e4c7 !important;
+    border-radius: 10px !important;
+    color: #2d6a4f !important;
+}
+.stExpander {
+    border: 1px solid #e8e6e0 !important;
     border-radius: 12px !important;
+    background: #fff !important;
+}
+.stProgress > div > div > div {
+    background: #52b788 !important;
+}
+div[data-testid="metric-container"] {
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+}
+div[data-testid="metric-container"] label {
+    font-size: 0.75rem !important;
+    color: #999 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+div[data-testid="metric-container"] [data-testid="metric-value"] {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.4rem !important;
+    color: #1a1a1a;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ── CONFIGURAÇÕES ────────────────────────────────────────────────────────────
+# ── CONFIG ────────────────────────────────────────────────────────────────────
 FOOTBALL_DATA_API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "DEFAULT_KEY")
-ODDS_API_KEY = os.getenv("ODDS_API_KEY", "sua_chave_the_odds_api")
-EMAIL_USER = os.getenv("EMAIL_USER")
-EMAIL_PASS = os.getenv("EMAIL_PASS")
+ODDS_API_KEY          = os.getenv("ODDS_API_KEY", "sua_chave_the_odds_api")
 
-HEADERS_FOOTBALL = {"X-Auth-Token": FOOTBALL_DATA_API_KEY}
-BASE_URL_FOOTBALL = "https://api.football-data.org/v4"
-BASE_URL_ODDS = "https://api.the-odds-api.com/v4"
+HEADERS_FD   = {"X-Auth-Token": FOOTBALL_DATA_API_KEY}
+BASE_FD      = "https://api.football-data.org/v4"
+BASE_ODDS    = "https://api.the-odds-api.com/v4"
 
 MARKET_MAP = {
-    'btts': 'BTTS',
-    'over25': 'Over 2.5',
-    'over15': 'Over 1.5',
-    'under35': 'Under 3.5',
-    'under25': 'Under 2.5',
-    'second_half_more': '2º Tempo +'
+    'btts':             'BTTS',
+    'over25':           'Over 2.5',
+    'over15':           'Over 1.5',
+    'under35':          'Under 3.5',
+    'under25':          'Under 2.5',
+    'second_half_more': '2º Tempo +',
 }
-
-THRESHOLDS = {'btts': 60, 'over25': 60, 'over15': 80, 'under35': 70, 'under25': 60, 'second_half_more': 60}
-
+THRESHOLDS = {
+    'btts': 60, 'over25': 60, 'over15': 80,
+    'under35': 70, 'under25': 60, 'second_half_more': 60,
+}
 CURRENCIES = {
-    'EUR': {'symbol': '€', 'flag': '🇪🇺', 'name': 'Euro'},
-    'BRL': {'symbol': 'R$', 'flag': '🇧🇷', 'name': 'Real'},
-    'USD': {'symbol': '$', 'flag': '🇺🇸', 'name': 'Dólar'},
-    'AOA': {'symbol': 'Kz', 'flag': '🇦🇴', 'name': 'Kwanza'},
+    'EUR': {'symbol': '€',  'flag': '🇪🇺'},
+    'BRL': {'symbol': 'R$', 'flag': '🇧🇷'},
+    'USD': {'symbol': '$',  'flag': '🇺🇸'},
+    'AOA': {'symbol': 'Kz', 'flag': '🇦🇴'},
 }
 
-# ── FUNÇÕES UTILITÁRIAS ──────────────────────────────────────────────────────
-def fmt_money(value, currency_key):
-    c = CURRENCIES.get(currency_key, CURRENCIES['EUR'])
-    return f"{c['symbol']}{value:,.2f}"
+# ── HELPERS ───────────────────────────────────────────────────────────────────
+def g_total(m): return (m['score']['fullTime'].get('home') or 0) + (m['score']['fullTime'].get('away') or 0)
+def g_home(m):  return m['score']['fullTime'].get('home') or 0
+def g_away(m):  return m['score']['fullTime'].get('away') or 0
+def g_fh(m):    return (m['score']['halfTime'].get('home') or 0) + (m['score']['halfTime'].get('away') or 0)
+def g_sh(m):    return g_total(m) - g_fh(m)
 
-def calculate_value_bet(real_prob, odd):
-    if not odd or odd <= 0 or not real_prob:
-        return None
-    return round((odd * (real_prob / 100)) - 1, 3)
-
-def get_total_goals(m):
-    return (m['score']['fullTime'].get('home', 0) or 0) + (m['score']['fullTime'].get('away', 0) or 0)
-
-def get_home_goals(m):
-    return m['score']['fullTime'].get('home', 0) or 0
-
-def get_away_goals(m):
-    return m['score']['fullTime'].get('away', 0) or 0
-
-def get_fh_goals(m):
-    return (m['score']['halfTime'].get('home', 0) or 0) + (m['score']['halfTime'].get('away', 0) or 0)
-
-def get_sh_goals(m):
-    return get_total_goals(m) - get_fh_goals(m)
-
-# ── API FUNCTIONS ────────────────────────────────────────────────────────────
+# ── API ───────────────────────────────────────────────────────────────────────
 @st.cache_data(ttl=3600)
 def fetch_fd(endpoint):
     if FOOTBALL_DATA_API_KEY == "DEFAULT_KEY":
         return None
     try:
-        r = requests.get(f"{BASE_URL_FOOTBALL}/{endpoint}", headers=HEADERS_FOOTBALL, timeout=10)
-        if r.status_code == 429:
-            st.error("❌ Rate limit atingido.")
-            return None
+        r = requests.get(f"{BASE_FD}/{endpoint}", headers=HEADERS_FD, timeout=10)
         return r.json() if r.status_code == 200 else None
-    except Exception as e:
+    except Exception:
         return None
 
 @st.cache_data(ttl=3600)
 def get_competitions():
     data = fetch_fd("competitions")
-    if not data or "competitions" not in data:
+    if not data:
         return {}
-    top = ["Premier League", "Primera Division", "Serie A", "Bundesliga", "Ligue 1",
-           "Primeira Liga", "Eredivisie", "UEFA Champions League"]
-    return {c["name"]: c["id"] for c in data["competitions"] if c["name"] in top and c.get("currentSeason")}
+    top = ["Premier League","Primera Division","Serie A","Bundesliga","Ligue 1",
+           "Primeira Liga","Eredivisie","UEFA Champions League"]
+    return {c["name"]: c["id"] for c in data.get("competitions", [])
+            if c["name"] in top and c.get("currentSeason")}
 
 @st.cache_data(ttl=600)
 def get_matches(comp_id):
     today = datetime.now().strftime("%Y-%m-%d")
-    nw = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
-    data = fetch_fd(f"competitions/{comp_id}/matches?dateFrom={today}&dateTo={nw}")
+    nxt   = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
+    data  = fetch_fd(f"competitions/{comp_id}/matches?dateFrom={today}&dateTo={nxt}")
     return data.get("matches", []) if data else []
 
 @st.cache_data(ttl=3600)
 def fetch_team_profile(team_id, comp_id):
-    p = {'ataque': 5, 'defesa': 5, 'estilo': 'equilibrado', 'over25': 50, 'btts': 50, 
-         'over15': 70, 'under35': 70, 'under25': 50, 'second_half_more': 50}
+    p = {'ataque': 5, 'defesa': 5, 'estilo': 'equilibrado',
+         'over25': 50, 'btts': 50, 'over15': 70, 'under35': 70,
+         'under25': 50, 'second_half_more': 50}
     try:
         sd = fetch_fd(f"competitions/{comp_id}/standings")
-        if sd and 'standings' in sd:
-            for g in sd['standings']:
-                for t in g['table']:
+        if sd:
+            for g in sd.get('standings', []):
+                for t in g.get('table', []):
                     if t['team']['id'] == team_id:
-                        pg, gf, ga = t['playedGames'], t['goalsFor'], t['goalsAgainst']
+                        pg = t['playedGames']; gf = t['goalsFor']; ga = t['goalsAgainst']
                         if pg > 0:
-                            p['ataque'] = min(10, max(1, round((gf / pg / 1.4) * 7 + 1)))
-                            p['defesa'] = min(10, max(1, round((1.4 / max(ga / pg, 0.1)) * 7 + 1)))
+                            p['ataque'] = min(10, max(1, round((gf/pg/1.4)*7+1)))
+                            p['defesa'] = min(10, max(1, round((1.4/max(ga/pg,0.1))*7+1)))
                         break
         md = fetch_fd(f"teams/{team_id}/matches?status=FINISHED&limit=10")
-        if md and 'matches' in md:
-            rm = md['matches'][:10]
+        if md:
+            rm = md.get('matches', [])[:10]
             if rm:
                 n = len(rm)
-                p['over25'] = round(sum(1 for m in rm if get_total_goals(m) > 2.5) / n * 100)
-                p['btts'] = round(sum(1 for m in rm if get_home_goals(m) > 0 and get_away_goals(m) > 0) / n * 100)
-                p['over15'] = round(sum(1 for m in rm if get_total_goals(m) > 1.5) / n * 100)
-                p['under35'] = round(sum(1 for m in rm if get_total_goals(m) < 3.5) / n * 100)
-                p['under25'] = round(sum(1 for m in rm if get_total_goals(m) < 2.5) / n * 100)
-                p['second_half_more'] = round(sum(1 for m in rm if get_sh_goals(m) > get_fh_goals(m)) / n * 100)
+                p['over25']           = round(sum(1 for m in rm if g_total(m) > 2.5)/n*100)
+                p['btts']             = round(sum(1 for m in rm if g_home(m)>0 and g_away(m)>0)/n*100)
+                p['over15']           = round(sum(1 for m in rm if g_total(m) > 1.5)/n*100)
+                p['under35']          = round(sum(1 for m in rm if g_total(m) < 3.5)/n*100)
+                p['under25']          = round(sum(1 for m in rm if g_total(m) < 2.5)/n*100)
+                p['second_half_more'] = round(sum(1 for m in rm if g_sh(m) > g_fh(m))/n*100)
         a, d = p['ataque'], p['defesa']
-        p['estilo'] = 'ofensivo' if a >= 7 and d <= 6 else 'defensivo' if d >= 7 and a <= 6 else 'equilibrado'
-        return p
+        p['estilo'] = 'ofensivo' if a>=7 and d<=6 else 'defensivo' if d>=7 and a<=6 else 'equilibrado'
     except Exception:
-        return p
+        pass
+    return p
 
-# ── ANALISADOR ────────────────────────────────────────────────────────────────
+# ── ANALYZER ─────────────────────────────────────────────────────────────────
 class Analisador:
     def __init__(self):
         if 'historico' not in st.session_state:
             st.session_state.historico = []
-        self.historico = st.session_state.historico
 
     @st.cache_data(ttl=3600)
     def fetch_h2h(_self, hid, aid, limit=5):
         try:
             hm = fetch_fd(f"teams/{hid}/matches?status=FINISHED&limit=20")
             h2h = []
-            if hm and 'matches' in hm:
-                for m in hm['matches']:
-                    if m.get('awayTeam', {}).get('id') == aid or m.get('homeTeam', {}).get('id') == aid:
+            if hm:
+                for m in hm.get('matches', []):
+                    if m.get('awayTeam',{}).get('id')==aid or m.get('homeTeam',{}).get('id')==aid:
                         h2h.append(m)
-                        if len(h2h) >= limit:
-                            break
-            n = max(len(h2h), 1)
+                        if len(h2h) >= limit: break
+            n = max(len(h2h),1)
             return {
-                'btts_h2h': sum(1 for m in h2h if get_home_goals(m) > 0 and get_away_goals(m) > 0) / n * 100,
-                'over25_h2h': sum(1 for m in h2h if get_total_goals(m) > 2.5) / n * 100
+                'btts_h2h':  sum(1 for m in h2h if g_home(m)>0 and g_away(m)>0)/n*100,
+                'over25_h2h': sum(1 for m in h2h if g_total(m)>2.5)/n*100,
             }
         except Exception:
             return {'btts_h2h': 50, 'over25_h2h': 50}
 
-    def fetch_live_odds(self, ht, at):
-        try:
-            if ODDS_API_KEY == "sua_chave_the_odds_api":
-                return []
-            r = requests.get(f"{BASE_URL_ODDS}/sports/soccer/odds/?apiKey={ODDS_API_KEY}&regions=eu&markets=h2h,totals", timeout=10)
-            if r.status_code == 200:
-                for ev in r.json():
-                    if ht.lower() in ev['home_team'].lower() and at.lower() in ev['away_team'].lower():
-                        return ev.get('bookmakers', [])
-            return []
-        except Exception:
-            return []
-
     def ajustes_estilo(self, hp, ap):
         aj = {k: 0 for k in MARKET_MAP}
         hs, as_ = hp['estilo'], ap['estilo']
-        if hs == 'ofensivo' and as_ == 'ofensivo':
-            aj.update({'btts': 8, 'over25': 12, 'over15': 5, 'under35': -10, 'under25': -8, 'second_half_more': 5})
-        elif hs == 'defensivo' and as_ == 'defensivo':
-            aj.update({'btts': -10, 'over25': -15, 'over15': -5, 'under35': 12, 'under25': 10, 'second_half_more': -5})
+        if hs=='ofensivo' and as_=='ofensivo':
+            aj.update({'btts':8,'over25':12,'over15':5,'under35':-10,'under25':-8,'second_half_more':5})
+        elif hs=='defensivo' and as_=='defensivo':
+            aj.update({'btts':-10,'over25':-15,'over15':-5,'under35':12,'under25':10,'second_half_more':-5})
         elif 'ofensivo' in [hs, as_]:
-            aj.update({'btts': 3, 'over25': 2, 'over15': 2, 'under35': -3, 'under25': -2, 'second_half_more': 3})
-        if hp['ataque'] >= 8 and ap['defesa'] <= 5:
-            aj['btts'] += 5
-            aj['over25'] += 8
-            aj['over15'] += 4
-            aj['under35'] -= 6
-            aj['under25'] -= 5
-            aj['second_half_more'] += 4
-        if ap['ataque'] >= 8 and hp['defesa'] <= 5:
-            aj['btts'] += 5
-            aj['over25'] += 8
-            aj['over15'] += 4
-            aj['under35'] -= 6
-            aj['under25'] -= 5
-            aj['second_half_more'] += 4
+            aj.update({'btts':3,'over25':2,'over15':2,'under35':-3,'under25':-2,'second_half_more':3})
+        if hp['ataque']>=8 and ap['defesa']<=5:
+            for k in ['btts','over25','over15','second_half_more']: aj[k]+=5
+            for k in ['under35','under25']: aj[k]-=5
+        if ap['ataque']>=8 and hp['defesa']<=5:
+            for k in ['btts','over25','over15','second_half_more']: aj[k]+=5
+            for k in ['under35','under25']: aj[k]-=5
         return aj
 
     def ajustes_comp(self, competition):
         aj = {k: 0 for k in MARKET_MAP}
         if 'Premier League' in competition:
-            aj.update({'over25': 5, 'over15': 3, 'under35': -2, 'under25': -1, 'second_half_more': 2})
+            aj.update({'over25':5,'over15':3,'under35':-2,'under25':-1,'second_half_more':2})
         elif 'Serie A' in competition:
-            aj.update({'btts': -3, 'over25': -2, 'over15': -1, 'under35': 4, 'under25': 3, 'second_half_more': -2})
+            aj.update({'btts':-3,'over25':-2,'over15':-1,'under35':4,'under25':3,'second_half_more':-2})
         elif 'Bundesliga' in competition:
-            aj.update({'btts': 5, 'over25': 8, 'over15': 5, 'under35': -8, 'under25': -7, 'second_half_more': 5})
+            aj.update({'btts':5,'over25':8,'over15':5,'under35':-8,'under25':-7,'second_half_more':5})
         return aj
 
     def analisar(self, ht, at, competition, hid, aid, comp_id, markets):
-        with st.spinner("🔮 Analisando dados em tempo real..."):
-            time.sleep(0.5)
-            hp = fetch_team_profile(hid, comp_id)
-            ap = fetch_team_profile(aid, comp_id)
-            h2h = self.fetch_h2h(hid, aid)
-            aj = self.ajustes_estilo(hp, ap)
-            ajc = self.ajustes_comp(competition)
+        hp  = fetch_team_profile(hid, comp_id)
+        ap  = fetch_team_profile(aid, comp_id)
+        h2h = self.fetch_h2h(hid, aid)
+        aj  = self.ajustes_estilo(hp, ap)
+        ajc = self.ajustes_comp(competition)
 
-            def calc(b, k, lo, hi, h2=0):
-                return min(hi, max(lo, b + aj[k] + ajc[k] + h2))
+        def calc(b, k, lo, hi, h2=0):
+            return min(hi, max(lo, b + aj[k] + ajc[k] + h2))
 
-            probs = {
-                'btts': calc((hp['btts'] + ap['btts']) / 2, 'btts', 15, 85, (h2h['btts_h2h'] - 50) / 10),
-                'over25': calc((hp['over25'] + ap['over25']) / 2, 'over25', 20, 80, (h2h['over25_h2h'] - 50) / 10),
-                'over15': calc((hp['over15'] + ap['over15']) / 2, 'over15', 40, 95),
-                'under35': calc((hp['under35'] + ap['under35']) / 2, 'under35', 30, 90),
-                'under25': calc((hp['under25'] + ap['under25']) / 2, 'under25', 25, 85),
-                'second_half_more': calc((hp['second_half_more'] + ap['second_half_more']) / 2, 'second_half_more', 20, 80)
-            }
+        probs = {
+            'btts':             calc((hp['btts']+ap['btts'])/2,           'btts',15,85,(h2h['btts_h2h']-50)/10),
+            'over25':           calc((hp['over25']+ap['over25'])/2,       'over25',20,80,(h2h['over25_h2h']-50)/10),
+            'over15':           calc((hp['over15']+ap['over15'])/2,       'over15',40,95),
+            'under35':          calc((hp['under35']+ap['under35'])/2,     'under35',30,90),
+            'under25':          calc((hp['under25']+ap['under25'])/2,     'under25',25,85),
+            'second_half_more': calc((hp['second_half_more']+ap['second_half_more'])/2,'second_half_more',20,80),
+        }
 
-            res = {f'prob_{k}': round(v, 1) for k, v in probs.items()}
-            res.update({f'odd_justa_{k}': round(100 / v, 2) for k, v in probs.items()})
-            res['h2h'] = h2h
-            res['home_profile'] = hp
-            res['away_profile'] = ap
-            res['recomendacoes'] = self._recs(probs, markets)
+        res = {f'prob_{k}': round(v,1) for k,v in probs.items()}
+        res.update({f'odd_justa_{k}': round(100/v,2) for k,v in probs.items()})
+        res['h2h'] = h2h
+        res['home_profile'] = hp
+        res['away_profile']  = ap
 
-            self.historico.append({
-                'home': ht,
-                'away': at,
-                'probs': {k: round(v, 1) for k, v in probs.items()},
-                'data': datetime.now().strftime('%d/%m %H:%M')
-            })
-            st.session_state.historico = self.historico
-            return res
-
-    def _recs(self, probs, markets):
-        icons = {'btts': '🎯', 'over25': '⚽', 'over15': '⚽', 'under35': '🛡️', 'under25': '🛡️', 'second_half_more': '⏱️'}
+        # recommendations
         recs = []
         for k, v in probs.items():
-            if k not in markets:
-                continue
+            if k not in markets: continue
             t = THRESHOLDS[k]
             recs.append({
-                'key': k,
-                'icon': icons[k],
-                'label': MARKET_MAP[k],
-                'prob': v,
-                'class': 'high' if v >= t else 'medium' if v >= t - 10 else 'low'
+                'key': k, 'label': MARKET_MAP[k], 'prob': v,
+                'cls': 'hi' if v>=t else 'mid' if v>=t-10 else 'lo',
             })
-        return recs
+        res['recomendacoes'] = recs
 
-    def gerar_pdf(self, currency_key='EUR'):
-        c = CURRENCIES.get(currency_key, CURRENCIES['EUR'])
+        st.session_state.historico.append({
+            'home': ht, 'away': at,
+            'probs': {k: round(v,1) for k,v in probs.items()},
+            'data': datetime.now().strftime('%d/%m %H:%M'),
+        })
+        return res
+
+    def gerar_pdf(self):
         pdf = FPDF()
         pdf.add_page()
-        
-        def clean_text(text):
-            if not isinstance(text, str):
-                text = str(text)
-            text = text.replace('🏠', 'Home: ').replace('🚩', 'Away: ')
-            text = text.replace('⚽', '[F] ').replace('🎯', '[T] ')
-            text = ''.join(char for char in text if ord(char) < 256 or char in '€$R$Kz')
-            return text.encode('latin-1', errors='ignore').decode('latin-1')
-        
-        pdf.set_font("Arial", "B", 12)
-        pdf.cell(200, 9, clean_text(f"Bet Analyzer Report"), ln=1, align='C')
+        pdf.set_font("Arial","B",12)
+        pdf.cell(200,9,"Bet Analyzer — Histórico",ln=1,align='C')
         pdf.ln(5)
-        
-        pdf.set_font("Arial", size=9)
-        pdf.cell(200, 6, clean_text(f"Total bets: {len(self.historico)}"), ln=1)
-        pdf.ln(3)
-        
-        MMAP = {"btts": "BTTS", "over25": "Over 2.5", "over15": "Over 1.5",
-                "under35": "Under 3.5", "under25": "Under 2.5", "second_half_more": "2o Tempo+"}
-        
-        for a in list(reversed(self.historico))[-20:]:
-            pdf.set_font("Arial", "B", 9)
-            pdf.cell(200, 6, clean_text(f"{a['home']} vs {a['away']}"), ln=1)
-            pdf.set_font("Arial", size=8)
-            pdf.cell(200, 5, clean_text(f"  {a['data']}"), ln=1)
-            pdf.ln(2)
-        
-        return pdf.output(dest='S').encode('latin-1', errors='ignore')
+        pdf.set_font("Arial",size=9)
+        for a in reversed(st.session_state.historico[-20:]):
+            pdf.set_font("Arial","B",9)
+            pdf.cell(200,6,f"{a['home']} vs {a['away']}",ln=1)
+            pdf.set_font("Arial",size=8)
+            pdf.cell(200,5,f"  {a['data']}",ln=1)
+            for k,v in a['probs'].items():
+                pdf.cell(200,4,f"    {MARKET_MAP.get(k,k)}: {v}%",ln=1)
+            pdf.ln(3)
+        return pdf.output(dest='S').encode('latin-1',errors='ignore')
 
-# ── INTERFACE PRINCIPAL ──────────────────────────────────────────────────────
+
+# ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
-    # Inicializar session state
-    if 'page' not in st.session_state:
-        st.session_state.page = 'analyze'
-    if 'selected_match' not in st.session_state:
-        st.session_state.selected_match = None
-    if 'currency' not in st.session_state:
-        st.session_state.currency = 'EUR'
-    if 'analysis' not in st.session_state:
-        st.session_state.analysis = None
-    if 'selected_markets' not in st.session_state:
-        st.session_state.selected_markets = ['btts', 'over25', 'over15']
+    for k, d in [
+        ('page','analyze'), ('selected_match',None), ('currency','EUR'),
+        ('analysis',None), ('selected_markets',['btts','over25','over15']),
+    ]:
+        if k not in st.session_state:
+            st.session_state[k] = d
 
-    an = Analisador()
+    an    = Analisador()
     comps = get_competitions()
-    c_info = CURRENCIES[st.session_state.currency]
-
-    # Status das APIs
-    api_ok = FOOTBALL_DATA_API_KEY != "DEFAULT_KEY"
+    api_ok  = FOOTBALL_DATA_API_KEY != "DEFAULT_KEY"
     odds_ok = ODDS_API_KEY != "sua_chave_the_odds_api"
+    c_info  = CURRENCIES[st.session_state.currency]
 
-    # ── TOP BAR ───────────────────────────────────────────────────────────────
-    col1, col2, col3 = st.columns([2, 4, 2])
-    
-    with col1:
-        st.markdown("""
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <span style="font-size: 2rem;">⚽</span>
-            <span style="font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #fff, #ff4b4b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Bet Analyzer</span>
+    # ── NAV ──────────────────────────────────────────────────────────────────
+    st.markdown(f"""
+    <div class="nav-wrap">
+        <div class="nav-logo">⚽ <span>Bet</span>Analyzer</div>
+        <div class="nav-status">
+            <span class="dot {'dot-on' if api_ok else 'dot-off'}"></span> Football API
+            &nbsp;&nbsp;
+            <span class="dot {'dot-on' if odds_ok else 'dot-warn'}"></span> Odds API
         </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        b1, b2, b3 = st.columns(3)
-        with b1:
-            if st.button("🔍 Análise", key="nav_analyze", use_container_width=True, 
-                        type="primary" if st.session_state.page == 'analyze' else "secondary"):
-                st.session_state.page = 'analyze'
-                st.rerun()
-        with b2:
-            if st.button("📊 Perfis", key="nav_profiles", use_container_width=True,
-                        type="primary" if st.session_state.page == 'profiles' else "secondary"):
-                st.session_state.page = 'profiles'
-                st.rerun()
-        with b3:
-            if st.button("📈 Histórico", key="nav_history", use_container_width=True,
-                        type="primary" if st.session_state.page == 'history' else "secondary"):
-                st.session_state.page = 'history'
-                st.rerun()
-    
-    with col3:
-        col_curr, col_dots = st.columns([1, 1])
-        with col_curr:
-            currency_opts = [f"{v['flag']} {k}" for k, v in CURRENCIES.items()]
-            curr_idx = list(CURRENCIES.keys()).index(st.session_state.currency)
-            selected = st.selectbox("Moeda", currency_opts, index=curr_idx, label_visibility="collapsed", key="currency_sel")
-            new_curr = list(CURRENCIES.keys())[currency_opts.index(selected)]
-            if new_curr != st.session_state.currency:
-                st.session_state.currency = new_curr
-                st.rerun()
-        
-        with col_dots:
-            st.markdown(f"""
-            <div style="display: flex; gap: 0.3rem; justify-content: flex-end;">
-                <div class="dot {'dot-green' if api_ok else 'dot-red'}" title="Football API"></div>
-                <div class="dot {'dot-green' if odds_ok else 'dot-yellow'}" title="Odds API"></div>
-            </div>
-            """, unsafe_allow_html=True)
-
-    # ── QUICK ACTIONS ─────────────────────────────────────────────────────────
-    st.markdown("""
-    <div style="display: flex; gap: 0.5rem; padding: 1rem 0; overflow-x: auto; margin-bottom: 1rem;">
-        <div class="quick-action active">⚽ Premier League</div>
-        <div class="quick-action">🎯 BTTS</div>
-        <div class="quick-action">⚽ Over 2.5</div>
-        <div class="quick-action">📋 Favoritos</div>
-        <div class="quick-action">📥 Exportar PDF</div>
     </div>
     """, unsafe_allow_html=True)
 
-    # ── MAIN CONTENT ──────────────────────────────────────────────────────────
-    
-    # Seletor de mercados
-    with st.expander("⚙️ Configurar Mercados", expanded=False):
-        market_options = list(MARKET_MAP.values())
-        selected_markets_display = st.multiselect(
-            "Selecione os mercados para análise",
-            market_options,
-            default=[MARKET_MAP[m] for m in st.session_state.selected_markets if m in MARKET_MAP]
-        )
-        rev_map = {v: k for k, v in MARKET_MAP.items()}
-        st.session_state.selected_markets = [rev_map[m] for m in selected_markets_display if m in rev_map]
+    st.markdown('<div class="content">', unsafe_allow_html=True)
 
-    # Seletor de competição e partida
+    # ── TOP ROW: tabs + currency ──────────────────────────────────────────────
+    col_tabs, col_curr, col_market = st.columns([3, 1, 2])
+
+    with col_tabs:
+        t1, t2, t3 = st.columns(3)
+        with t1:
+            if st.button("Análise", key="nav_a",
+                         type="primary" if st.session_state.page=='analyze' else "secondary",
+                         use_container_width=True):
+                st.session_state.page = 'analyze'; st.rerun()
+        with t2:
+            if st.button("Perfis", key="nav_p",
+                         type="primary" if st.session_state.page=='profiles' else "secondary",
+                         use_container_width=True):
+                st.session_state.page = 'profiles'; st.rerun()
+        with t3:
+            if st.button("Histórico", key="nav_h",
+                         type="primary" if st.session_state.page=='history' else "secondary",
+                         use_container_width=True):
+                st.session_state.page = 'history'; st.rerun()
+
+    with col_curr:
+        opts = [f"{v['flag']} {k}" for k,v in CURRENCIES.items()]
+        idx  = list(CURRENCIES.keys()).index(st.session_state.currency)
+        sel  = st.selectbox("Moeda", opts, index=idx,
+                            label_visibility="collapsed", key="curr_sel")
+        new  = list(CURRENCIES.keys())[opts.index(sel)]
+        if new != st.session_state.currency:
+            st.session_state.currency = new; st.rerun()
+
+    with col_market:
+        rev  = {v:k for k,v in MARKET_MAP.items()}
+        sel_m = st.multiselect("Mercados",list(MARKET_MAP.values()),
+                               default=[MARKET_MAP[m] for m in st.session_state.selected_markets if m in MARKET_MAP],
+                               label_visibility="collapsed", key="mkt_sel")
+        st.session_state.selected_markets = [rev[m] for m in sel_m if m in rev]
+
+    st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+
+    # ── COMPETITION + MATCHES ─────────────────────────────────────────────────
     if comps:
         comp_list = list(comps.keys())
-        selected_comp = st.selectbox(
-            "Competição",
-            comp_list,
-            index=0,
-            key="comp_selector"
-        )
-
+        st.markdown('<div class="section-title">Competição</div>', unsafe_allow_html=True)
+        selected_comp = st.selectbox("Competição", comp_list, index=0,
+                                     key="comp_sel", label_visibility="collapsed")
         comp_id = comps[selected_comp]
 
-        # Buscar partidas
-        with st.spinner("🔍 Carregando partidas..."):
+        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+        st.markdown('<div class="section-title">Partidas (próximos 7 dias)</div>', unsafe_allow_html=True)
+
+        with st.spinner("Carregando partidas..."):
             matches = get_matches(comp_id)
 
-        # Grid de partidas
-        st.markdown('<div class="match-grid">', unsafe_allow_html=True)
-        
-        match_found = False
-        for m in matches[:12]:  # Limitar para performance
-            if m["status"] in ["SCHEDULED", "TIMED"]:
-                try:
-                    dt = datetime.fromisoformat(m["utcDate"].replace("Z", "+00:00"))
-                    match_data = {
-                        "id": m["id"],
-                        "home_id": m["homeTeam"]["id"],
-                        "away_id": m["awayTeam"]["id"],
-                        "home_team": m["homeTeam"]["name"],
-                        "away_team": m["awayTeam"]["name"],
-                        "date": dt,
-                        "time": dt.strftime('%H:%M'),
-                        "day": dt.strftime('%d/%m')
-                    }
-                    match_found = True
-                    
-                    # Criar card para cada partida
-                    with st.container():
-                        selected_class = "selected" if st.session_state.selected_match and st.session_state.selected_match.get('id') == m["id"] else ""
-                        
-                        if st.button(
-                            f"**{match_data['home_team']}** vs **{match_data['away_team']}**\n\n{match_data['day']} {match_data['time']}",
-                            key=f"match_{m['id']}",
-                            use_container_width=True
-                        ):
-                            st.session_state.selected_match = match_data
-                            st.rerun()
-                            
-                except Exception as e:
-                    continue
-        
-        if not match_found:
-            st.info("Nenhuma partida encontrada para esta competição.")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+        scheduled = [m for m in matches[:16] if m["status"] in ["SCHEDULED","TIMED"]]
 
-    # ── PAINEL DE APOSTA RÁPIDA ──────────────────────────────────────────────
+        if not scheduled:
+            st.info("Nenhuma partida encontrada para esta competição.")
+        else:
+            # grid 3 cols
+            cols_per_row = 3
+            rows = [scheduled[i:i+cols_per_row] for i in range(0, len(scheduled), cols_per_row)]
+            for row in rows:
+                cols = st.columns(cols_per_row)
+                for col, m in zip(cols, row):
+                    try:
+                        dt = datetime.fromisoformat(m["utcDate"].replace("Z","+00:00"))
+                        ht = m["homeTeam"]["name"]
+                        at = m["awayTeam"]["name"]
+                        is_sel = (st.session_state.selected_match and
+                                  st.session_state.selected_match.get('id') == m["id"])
+                        with col:
+                            label = f"{'✓ ' if is_sel else ''}{ht} vs {at}\n{dt.strftime('%d/%m')} · {dt.strftime('%H:%M')}"
+                            if st.button(label, key=f"m_{m['id']}", use_container_width=True,
+                                         type="primary" if is_sel else "secondary"):
+                                st.session_state.selected_match = {
+                                    'id': m["id"],
+                                    'home_id':   m["homeTeam"]["id"],
+                                    'away_id':   m["awayTeam"]["id"],
+                                    'home_team': ht,
+                                    'away_team': at,
+                                    'date': dt,
+                                }
+                                st.session_state.analysis = None
+                                st.rerun()
+                    except Exception:
+                        continue
+
+    # ── ANALYZE PANEL ─────────────────────────────────────────────────────────
     if st.session_state.selected_match:
         match = st.session_state.selected_match
-        
-        st.markdown("---")
-        col_odd, col_stake, col_btn = st.columns([2, 2, 3])
-        
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        st.markdown('<div class="section-title">Partida selecionada</div>', unsafe_allow_html=True)
+
+        col_info, col_odd, col_stake, col_btn = st.columns([3, 1, 1, 2])
+        with col_info:
+            st.markdown(f"""
+            <div style="padding: 0.6rem 0; font-weight:600; font-size:1rem;">
+                {match['home_team']} <span style="color:#999;font-weight:400;font-size:0.85rem;margin:0 0.5rem;">vs</span> {match['away_team']}
+            </div>
+            """, unsafe_allow_html=True)
         with col_odd:
-            odd = st.number_input("Odd", min_value=1.01, value=2.00, step=0.05, format="%.2f")
-        
+            odd = st.number_input("Odd", min_value=1.01, value=2.00, step=0.05,
+                                  format="%.2f", label_visibility="visible")
         with col_stake:
-            stake = st.number_input(f"Stake ({c_info['symbol']})", min_value=0.0, value=10.0, step=1.0, format="%.2f")
-        
+            stake = st.number_input(f"Stake ({c_info['symbol']})", min_value=0.0,
+                                    value=10.0, step=1.0, format="%.2f",
+                                    label_visibility="visible")
         with col_btn:
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🚀 ANALISAR PARTIDA", use_container_width=True):
-                with st.spinner("🔮 Processando análise..."):
-                    result = an.analisar(
-                        match['home_team'], match['away_team'],
-                        selected_comp, match['home_id'], match['away_id'],
-                        comp_id, st.session_state.selected_markets
-                    )
-                    st.session_state.analysis = result
+            st.markdown("<div style='height:1.7rem'></div>", unsafe_allow_html=True)
+            if st.button("Analisar →", key="run_analysis", use_container_width=True, type="primary"):
+                if not st.session_state.selected_markets:
+                    st.warning("Selecione pelo menos um mercado.")
+                else:
+                    with st.spinner("Analisando..."):
+                        result = an.analisar(
+                            match['home_team'], match['away_team'],
+                            selected_comp,
+                            match['home_id'], match['away_id'],
+                            comp_id, st.session_state.selected_markets
+                        )
+                        st.session_state.analysis = result
                     st.rerun()
 
-    # ── CONTEÚDO DAS PÁGINAS ─────────────────────────────────────────────────
-    
-    if st.session_state.page == 'analyze' and st.session_state.analysis:
-        analise = st.session_state.analysis
-        
-        st.markdown("""
-        <div class="result-card fade-in">
-            <div class="result-header">
-                <div class="result-title">📊 Resultados da Análise</div>
-                <span class="result-badge">⚡ Tempo Real</span>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        # Métricas principais
-        cols = st.columns(3)
-        markets_show = ['btts', 'over25', 'over15']
-        for i, market in enumerate(markets_show):
-            if market in analise:
-                prob = analise[f'prob_{market}']
-                with cols[i]:
-                    st.metric(MARKET_MAP[market], f"{prob:.0f}%")
-        
-        # Barras de probabilidade
-        st.markdown('<div style="margin-top: 2rem;">', unsafe_allow_html=True)
-        
-        for market in st.session_state.selected_markets:
-            if market in analise:
-                prob = analise[f'prob_{market}']
-                cls = "high" if prob >= THRESHOLDS[market] else "medium" if prob >= THRESHOLDS[market] - 10 else "low"
-                
+    # ── PAGE CONTENT ──────────────────────────────────────────────────────────
+
+    # ─ ANALYZE PAGE ─
+    if st.session_state.page == 'analyze':
+        if st.session_state.analysis:
+            analise = st.session_state.analysis
+            match   = st.session_state.selected_match
+
+            st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+
+            # chips
+            chips_markets = ['btts','over25','over15']
+            st.markdown('<div class="chips">' +
+                ''.join(f'<div class="chip"><div class="chip-val">{analise[f"prob_{k}"]:.0f}%</div>'
+                        f'<div class="chip-lbl">{MARKET_MAP[k]}</div></div>'
+                        for k in chips_markets) +
+                '</div>', unsafe_allow_html=True)
+
+            # probability bars
+            st.markdown('<div class="section-title">Probabilidades</div>', unsafe_allow_html=True)
+            for rec in analise['recomendacoes']:
+                fill_cls = {'hi':'fill-hi','mid':'fill-mid','lo':'fill-lo'}[rec['cls']]
+                odd_justa = analise[f"odd_justa_{rec['key']}"]
                 st.markdown(f"""
-                <div class="prob-meter">
-                    <span class="meter-label">{MARKET_MAP[market]}</span>
-                    <div class="meter-bar">
-                        <div class="meter-fill {cls}" style="width: {prob}%;"></div>
+                <div class="prob-row">
+                    <span class="prob-label">{rec['label']}</span>
+                    <div class="prob-track">
+                        <div class="prob-fill {fill_cls}" style="width:{rec['prob']}%"></div>
                     </div>
-                    <span class="meter-value">{prob:.0f}%</span>
+                    <span class="prob-val">{rec['prob']:.0f}%</span>
+                    <span class="prob-odd">{odd_justa}</span>
                 </div>
                 """, unsafe_allow_html=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # H2H
-        if 'h2h' in analise:
-            h2h = analise['h2h']
-            col_h1, col_h2 = st.columns(2)
-            with col_h1:
-                st.metric("BTTS H2H", f"{h2h['btts_h2h']:.0f}%")
-            with col_h2:
-                st.metric("Over 2.5 H2H", f"{h2h['over25_h2h']:.0f}%")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
 
-    elif st.session_state.page == 'profiles' and st.session_state.selected_match:
-        match = st.session_state.selected_match
-        comp_id = comps[selected_comp]
-        
-        with st.spinner("🔍 Carregando perfis..."):
-            hp = fetch_team_profile(match['home_id'], comp_id)
-            ap = fetch_team_profile(match['away_id'], comp_id)
-        
-        st.markdown("""
-        <div class="result-card">
-            <div class="result-header">
-                <div class="result-title">📊 Perfis das Equipas</div>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown(f"### 🏠 {match['home_team']}")
-            st.markdown(f"**Estilo:** {hp['estilo'].upper()}")
-            st.progress(hp['ataque']/10, text=f"Ataque: {hp['ataque']}/10")
-            st.progress(hp['defesa']/10, text=f"Defesa: {hp['defesa']}/10")
-            
-        with col2:
-            st.markdown(f"### 🚩 {match['away_team']}")
-            st.markdown(f"**Estilo:** {ap['estilo'].upper()}")
-            st.progress(ap['ataque']/10, text=f"Ataque: {ap['ataque']}/10")
-            st.progress(ap['defesa']/10, text=f"Defesa: {ap['defesa']}/10")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+            # H2H
+            if 'h2h' in analise:
+                h2h = analise['h2h']
+                st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+                st.markdown('<div class="section-title">Head to Head</div>', unsafe_allow_html=True)
+                c1, c2 = st.columns(2)
+                with c1:
+                    st.metric("BTTS H2H", f"{h2h['btts_h2h']:.0f}%")
+                with c2:
+                    st.metric("Over 2.5 H2H", f"{h2h['over25_h2h']:.0f}%")
 
-    elif st.session_state.page == 'history':
-        if an.historico:
-            st.markdown("""
-            <div class="result-card">
-                <div class="result-header">
-                    <div class="result-title">📈 Histórico de Análises</div>
-                    <span class="result-badge">{len(an.historico)} total</span>
+            # Value bet
+            if st.session_state.selected_match:
+                ev = round((odd * (analise['prob_btts']/100)) - 1, 3)
+                if ev > 0:
+                    st.success(f"✓ Value bet detectado  —  EV: +{ev:.3f}")
+                else:
+                    st.info(f"EV calculado: {ev:.3f}")
+
+        else:
+            if not st.session_state.selected_match:
+                st.markdown("""
+                <div style="text-align:center;padding:3rem 0;color:#999;">
+                    <div style="font-size:2rem;margin-bottom:0.75rem;">⚽</div>
+                    <div style="font-size:1rem;font-weight:500;">Selecione uma partida para começar</div>
+                    <div style="font-size:0.85rem;margin-top:0.4rem;">Escolha a competição e clique numa partida acima</div>
                 </div>
-            """.replace("{len(an.historico)}", str(len(an.historico))), unsafe_allow_html=True)
-            
-            for entry in reversed(an.historico[-10:]):
-                with st.container():
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                <div style="text-align:center;padding:2rem 0;color:#999;">
+                    <div style="font-size:0.95rem;">Clique em <strong>Analisar →</strong> para ver as probabilidades</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # ─ PROFILES PAGE ─
+    elif st.session_state.page == 'profiles':
+        if st.session_state.selected_match and comps:
+            match = st.session_state.selected_match
+            with st.spinner("Carregando perfis..."):
+                hp = fetch_team_profile(match['home_id'], comp_id)
+                ap = fetch_team_profile(match['away_id'], comp_id)
+
+            st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
+            c1, c2 = st.columns(2)
+            for col, team_name, profile in [(c1, match['home_team'], hp), (c2, match['away_team'], ap)]:
+                with col:
+                    style_cls = {'ofensivo':'style-off','defensivo':'style-def','equilibrado':'style-eq'}[profile['estilo']]
                     st.markdown(f"""
-                    <div style="background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 12px; margin-bottom: 0.5rem;">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="font-weight: 600;">{entry['home']} vs {entry['away']}</span>
-                            <span style="color: #a0a0b0;">{entry['data']}</span>
-                        </div>
+                    <div class="profile-card">
+                        <div class="profile-name">{'🏠' if team_name==match['home_team'] else '🚩'} {team_name}</div>
+                        <div class="profile-style {style_cls}">{profile['estilo'].upper()}</div>
                     </div>
                     """, unsafe_allow_html=True)
-            
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-            if st.button("📥 Exportar Histórico PDF", use_container_width=True):
-                pdf_data = an.gerar_pdf(st.session_state.currency)
-                st.download_button(
-                    "📥 Download PDF",
-                    data=pdf_data,
-                    file_name="bet_analyzer_history.pdf",
-                    mime="application/pdf",
-                    use_container_width=True
-                )
+                    st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
+                    st.progress(profile['ataque']/10, text=f"Ataque  {profile['ataque']}/10")
+                    st.progress(profile['defesa']/10,  text=f"Defesa  {profile['defesa']}/10")
+                    st.markdown("<div style='height:0.75rem'></div>", unsafe_allow_html=True)
+                    mc1, mc2, mc3 = st.columns(3)
+                    mc1.metric("BTTS",       f"{profile['btts']}%")
+                    mc2.metric("Over 2.5",   f"{profile['over25']}%")
+                    mc3.metric("Over 1.5",   f"{profile['over15']}%")
         else:
-            st.info("📊 Nenhuma análise no histórico. Faça uma análise para começar!")
+            st.info("Selecione uma partida primeiro.")
+
+    # ─ HISTORY PAGE ─
+    elif st.session_state.page == 'history':
+        hist = st.session_state.historico
+        if hist:
+            col_ttl, col_pdf = st.columns([3,1])
+            with col_ttl:
+                st.markdown(f'<div class="section-title">{len(hist)} análises</div>', unsafe_allow_html=True)
+            with col_pdf:
+                if st.button("Exportar PDF", key="pdf_btn", use_container_width=True):
+                    pdf_data = an.gerar_pdf()
+                    st.download_button("⬇ Download",data=pdf_data,
+                                       file_name="bet_analyzer.pdf",
+                                       mime="application/pdf",
+                                       use_container_width=True)
+
+            for entry in reversed(hist[-20:]):
+                probs_str = "  ·  ".join(f"{MARKET_MAP.get(k,k)} {v}%" for k,v in list(entry['probs'].items())[:3])
+                st.markdown(f"""
+                <div class="hist-row">
+                    <div>
+                        <div class="hist-match">{entry['home']} vs {entry['away']}</div>
+                        <div style="font-size:0.78rem;color:#999;margin-top:0.2rem;">{probs_str}</div>
+                    </div>
+                    <div class="hist-date">{entry['data']}</div>
+                </div>
+                """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div style="text-align:center;padding:3rem 0;color:#999;">
+                <div style="font-size:2rem;margin-bottom:0.75rem;">📈</div>
+                <div>Nenhuma análise ainda. Faça uma análise para começar.</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)  # .content
+
 
 if __name__ == "__main__":
     main()
