@@ -727,17 +727,17 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
         value=value,
         number={'suffix': '%', 'font': {'size': 22, 'color': '#FFFFFF', 'family': 'Rajdhani'}},
         title={'text': (
-            f"<span style='font-size:0.85em;font-family:Rajdhani,sans-serif;"
-            f"color:#FFFFFF;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"
+            f"<span style='font-size:1.1em;font-family:Rajdhani,sans-serif;"  # Aumentado de 0.85em para 1.1em
+            f"color:#FFFFFF;font-weight:700;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"  # Adicionado font-weight:700 (bold)
         )},
         domain={'x': [0, 1], 'y': [0, 1]},
         gauge={
             'shape': "angular",
             'axis': {'range': [None, max_value], 'tickwidth': 1, 'tickcolor': "#2C3E52",
                      'tickfont': {'color': '#FFFFFF', 'size': 9}, 
-                     'tickmode': 'array',  # Forçar exibição dos ticks
-                     'tickvals': [0, 20, 40, 60, 80, 100]},  # Valores explícitos para garantir visibilidade
-            'bar': {'color': bar_color, 'thickness': 0.25},  # Reduzido um pouco a espessura
+                     'tickmode': 'array',
+                     'tickvals': [0, 20, 40, 60, 80, 100]},
+            'bar': {'color': bar_color, 'thickness': 0.25},
             'bgcolor': "#1E2D3E",
             'borderwidth': 0,
             'steps': [
@@ -749,8 +749,8 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
         }
     ))
     fig.update_layout(
-        height=160,  # Reduzido significativamente
-        margin=dict(l=5, r=5, t=40, b=5),  # Margens mínimas
+        height=160,
+        margin=dict(l=5, r=5, t=45, b=5),  # Aumentei um pouco a margem superior para dar espaço ao título maior
         paper_bgcolor='#162130', 
         plot_bgcolor='#162130',
         font={'color': '#FFFFFF'},
