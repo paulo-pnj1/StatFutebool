@@ -727,8 +727,8 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
         value=value,
         number={'suffix': '%', 'font': {'size': 22, 'color': '#FFFFFF', 'family': 'Rajdhani'}},
         title={'text': (
-            f"<span style='font-size:1.1em;font-family:Rajdhani,sans-serif;"  # Aumentado de 0.85em para 1.1em
-            f"color:#FFFFFF;font-weight:700;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"  # Adicionado font-weight:700 (bold)
+            f"<span style='font-size:14pt;font-family:Rajdhani,sans-serif;"  # Alterado para 14pt
+            f"color:#FFFFFF;font-weight:700;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"
         )},
         domain={'x': [0, 1], 'y': [0, 1]},
         gauge={
@@ -749,13 +749,14 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
         }
     ))
     fig.update_layout(
-        height=160,
-        margin=dict(l=5, r=5, t=45, b=5),  # Aumentei um pouco a margem superior para dar espaço ao título maior
+        height=170,  # Aumentei um pouco para acomodar o título maior
+        margin=dict(l=5, r=5, t=50, b=5),  # Aumentei a margem superior para 50
         paper_bgcolor='#162130', 
         plot_bgcolor='#162130',
         font={'color': '#FFFFFF'},
     )
     return fig
+    
 # --- 6. INTERFACE PRINCIPAL ---
 def main():
     for key, val in [('last_analise', None), ('last_match', None), ('selected_comp_name', None)]:
