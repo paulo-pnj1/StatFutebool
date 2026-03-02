@@ -35,7 +35,7 @@ st.markdown("""
   Verde primario   : #00C853
   Dourado          : #FFB300
   Vermelho         : #E53935
-  Texto principal  : #FFFFFF
+  Texto principal  : #C5D3DE
   Texto secundario : #C5D3DE
   Texto terciario  : #8FA3B1
 */
