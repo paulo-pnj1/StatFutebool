@@ -71,7 +71,7 @@ section[data-testid="stSidebar"] span { color: #FFFFFF !important; }
 section[data-testid="stSidebar"] label { color: #C5D3DE !important; }
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
-    color: #FFFFFF !important;
+    color: #c70000 !important;
     font-family: 'Rajdhani', sans-serif !important;
 }
 section[data-testid="stSidebar"] .stExpander {
