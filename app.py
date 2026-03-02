@@ -35,14 +35,14 @@ st.markdown("""
   Verde primario   : #00C853
   Dourado          : #FFB300
   Vermelho         : #E53935
-  Texto principal  : #C5D3DE
+  Texto principal  : #FFFFFF
   Texto secundario : #C5D3DE
   Texto terciario  : #8FA3B1
 */
 
 html, body, [class*="css"] {
     font-family: 'Barlow', sans-serif;
-    color: #FFFFFF;
+    color: #000000;
 }
 
 .stApp {
