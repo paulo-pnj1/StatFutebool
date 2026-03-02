@@ -367,16 +367,16 @@ hr {
     display: inline-block;
     background: rgba(255,179,0,0.15);
     border: 1px solid #FFB300;
-    color: #FFB300;
+    color: #FFFFFF;
     font-family: 'Rajdhani', sans-serif;
     font-weight: 600;
-    font-size: 0.78rem;
+    font-size: 0.8rem;  /* Reduzido de 0.9rem para 0.8rem */
     letter-spacing: 0.06em;
-    padding: 2px 10px;
+    padding: 3px 10px;  /* Reduzido o padding */
     border-radius: 20px;
     text-transform: uppercase;
+    margin-top: 2px;  /* Reduzido a margem superior */
 }
-
 /* ── Cards ── */
 .match-card {
     background: linear-gradient(135deg, #1E2D3E 0%, #162130 100%);
@@ -725,16 +725,16 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
-        number={'suffix': '%', 'font': {'size': 28, 'color': '#FFFFFF', 'family': 'Rajdhani'}},
+        number={'suffix': '%', 'font': {'size': 24, 'color': '#FFFFFF', 'family': 'Rajdhani'}},  # Reduzido de 32 para 24
         title={'text': (
-            f"<span style='font-size:0.82em;font-family:Rajdhani,sans-serif;"
-            f"color:#C5D3DE;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"
+            f"<span style='font-size:0.95em;font-family:Rajdhani,sans-serif;"  # Reduzido de 1.1em para 0.95em
+            f"color:#FFFFFF;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"
         )},
         domain={'x': [0, 1], 'y': [0, 1]},
         gauge={
             'shape': "angular",
             'axis': {'range': [None, max_value], 'tickwidth': 1, 'tickcolor': "#2C3E52",
-                     'tickfont': {'color': '#C5D3DE', 'size': 10}},
+                     'tickfont': {'color': '#FFFFFF', 'size': 10}},  # Reduzido de 11 para 10
             'bar': {'color': bar_color, 'thickness': 0.3},
             'bgcolor': "#1E2D3E",
             'borderwidth': 0,
@@ -747,12 +747,13 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
         }
     ))
     fig.update_layout(
-        height=210, margin=dict(l=15, r=15, t=55, b=10),
-        paper_bgcolor='#162130', plot_bgcolor='#162130',
+        height=200,  # Reduzido de 230 para 200
+        margin=dict(l=10, r=10, t=50, b=10),  # Reduzido as margens
+        paper_bgcolor='#162130', 
+        plot_bgcolor='#162130',
         font={'color': '#FFFFFF'},
     )
     return fig
-
 # --- 6. INTERFACE PRINCIPAL ---
 def main():
     for key, val in [('last_analise', None), ('last_match', None), ('selected_comp_name', None)]:
