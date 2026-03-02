@@ -725,16 +725,16 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
-        number={'suffix': '%', 'font': {'size': 32, 'color': '#FFFFFF', 'family': 'Rajdhani'}},
+        number={'suffix': '%', 'font': {'size': 28, 'color': '#FFFFFF', 'family': 'Rajdhani'}},
         title={'text': (
-            f"<span style='font-size:1.1em;font-family:Rajdhani,sans-serif;"
-            f"color:#FFFFFF;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"
+            f"<span style='font-size:0.82em;font-family:Rajdhani,sans-serif;"
+            f"color:#C5D3DE;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"
         )},
         domain={'x': [0, 1], 'y': [0, 1]},
         gauge={
             'shape': "angular",
             'axis': {'range': [None, max_value], 'tickwidth': 1, 'tickcolor': "#2C3E52",
-                     'tickfont': {'color': '#FFFFFF', 'size': 11}},
+                     'tickfont': {'color': '#C5D3DE', 'size': 10}},
             'bar': {'color': bar_color, 'thickness': 0.3},
             'bgcolor': "#1E2D3E",
             'borderwidth': 0,
@@ -747,13 +747,12 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
         }
     ))
     fig.update_layout(
-        height=230,
-        margin=dict(l=15, r=15, t=65, b=15),
-        paper_bgcolor='#162130', 
-        plot_bgcolor='#162130',
+        height=210, margin=dict(l=15, r=15, t=55, b=10),
+        paper_bgcolor='#162130', plot_bgcolor='#162130',
         font={'color': '#FFFFFF'},
     )
     return fig
+
 # --- 6. INTERFACE PRINCIPAL ---
 def main():
     for key, val in [('last_analise', None), ('last_match', None), ('selected_comp_name', None)]:
