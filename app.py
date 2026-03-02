@@ -35,7 +35,7 @@ st.markdown("""
   Verde primario   : #00C853
   Dourado          : #FFB300
   Vermelho         : #E53935
-  Texto principal  : #FFFFFF
+  Texto principal  : #1E2D3E
   Texto secundario : #C5D3DE
   Texto terciario  : #8FA3B1
 */
@@ -52,8 +52,8 @@ html, body, [class*="css"] {
         radial-gradient(ellipse at 80% 100%, rgba(0,132,61,0.03) 0%, transparent 50%);
 }
 
-p, li { color: #FFFFFF !important; }
-.stMarkdown p, .stMarkdown li { color: #FFFFFF !important; }
+p, li { color: #1E2D3E !important; }
+.stMarkdown p, .stMarkdown li { color: #1E2D3E !important; }
 label {
     color: #C5D3DE !important;
     font-family: 'Barlow', sans-serif !important;
@@ -67,11 +67,11 @@ section[data-testid="stSidebar"] {
 }
 section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] li,
-section[data-testid="stSidebar"] span { color: #FFFFFF !important; }
+section[data-testid="stSidebar"] span { color: #1E2D3E !important; }
 section[data-testid="stSidebar"] label { color: #C5D3DE !important; }
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
     font-family: 'Rajdhani', sans-serif !important;
 }
 section[data-testid="stSidebar"] .stExpander {
@@ -86,7 +86,7 @@ section[data-testid="stSidebar"] .stSelectbox > div > div {
     background-color: #0A0F16 !important;
     border: 1px solid #2C3E52 !important;
     border-radius: 6px !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
 }
 section[data-testid="stSidebar"] .stMultiSelect > div > div:focus-within,
 section[data-testid="stSidebar"] .stSelectbox > div > div:focus-within {
@@ -107,14 +107,14 @@ ul[data-baseweb="menu"],
 [role="listbox"] li,
 [role="option"] {
     background-color: #0A0F16 !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
 }
 [data-baseweb="popover"] li:hover,
 [data-baseweb="menu"] li:hover,
 [role="option"]:hover,
 [role="option"][aria-selected="true"] {
     background-color: #1E2D3E !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
 }
 /* Tags selecionadas */
 span[data-baseweb="tag"] {
@@ -122,12 +122,12 @@ span[data-baseweb="tag"] {
     border: 1px solid #2C3E52 !important;
     border-radius: 4px !important;
 }
-span[data-baseweb="tag"] span { color: #FFFFFF !important; }
+span[data-baseweb="tag"] span { color: #1E2D3E !important; }
 section[data-testid="stSidebar"] .stTextInput > div > div > input {
     background-color: #162130 !important;
     border: 1px solid #2C3E52 !important;
     border-radius: 6px !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
 }
 
 /* ── Titulos ── */
@@ -135,7 +135,7 @@ h1 {
     font-family: 'Rajdhani', sans-serif !important;
     font-weight: 700 !important;
     font-size: 2.4rem !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
     letter-spacing: 0.04em;
     padding-bottom: 0.25rem;
     border-bottom: 3px solid #00C853;
@@ -145,7 +145,7 @@ h1 {
 h2 {
     font-family: 'Rajdhani', sans-serif !important;
     font-weight: 700 !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
     border-left: 4px solid #00C853;
     padding-left: 0.75rem;
     margin-top: 1.5rem !important;
@@ -153,7 +153,7 @@ h2 {
 h3 {
     font-family: 'Rajdhani', sans-serif !important;
     font-weight: 600 !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
 }
 
 /* ── Tabs ── */
@@ -189,7 +189,7 @@ h3 {
     text-transform: uppercase;
     font-size: 1rem;
     background-color: #2E7D52 !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
     border: none !important;
     border-radius: 6px !important;
     padding: 0.6rem 1.5rem !important;
@@ -203,7 +203,7 @@ h3 {
 }
 section[data-testid="stSidebar"] .stButton > button {
     background-color: #E53935 !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
     font-size: 0.75rem !important;
     padding: 0.25rem 0.6rem !important;
     box-shadow: none !important;
@@ -219,7 +219,7 @@ section[data-testid="stSidebar"] .stButton > button:hover {
     background-color: #162130 !important;
     border: 1px solid #2C3E52 !important;
     border-radius: 6px !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
 }
 .stSelectbox > div > div:focus-within,
 .stMultiSelect > div > div:focus-within {
@@ -231,9 +231,9 @@ section[data-testid="stSidebar"] .stButton > button:hover {
     background-color: #162130 !important;
     border: 1px solid #2C3E52 !important;
     border-radius: 6px !important;
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
 }
-input { color: #FFFFFF !important; }
+input { color: #1E2D3E !important; }
 input::placeholder { color: #8FA3B1 !important; }
 
 /* ── Metricas ── */
@@ -251,7 +251,7 @@ input::placeholder { color: #8FA3B1 !important; }
     font-size: 0.8rem !important;
 }
 [data-testid="stMetricValue"] {
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
     font-family: 'Rajdhani', sans-serif !important;
     font-size: 1.6rem !important;
     font-weight: 700 !important;
@@ -305,7 +305,7 @@ thead tr th {
 tbody tr:nth-child(even) { background-color: #162130 !important; }
 tbody tr:nth-child(odd)  { background-color: #1A2636 !important; }
 tbody tr:hover           { background-color: #263547 !important; }
-tbody td                 { color: #FFFFFF !important; }
+tbody td                 { color: #1E2D3E !important; }
 
 /* ── Progress Bar ── */
 .stProgress > div > div > div > div {
@@ -389,7 +389,7 @@ hr {
     font-family: 'Rajdhani', sans-serif;
     font-size: 1.4rem;
     font-weight: 700;
-    color: #FFFFFF;
+    color: #1E2D3E;
     text-align: center;
     padding: 0.75rem;
     background: linear-gradient(135deg, #162130 0%, #1E2D3E 100%);
@@ -414,11 +414,11 @@ span[data-baseweb="tag"] {
     border: 1px solid #00C853 !important;
     border-radius: 4px !important;
 }
-span[data-baseweb="tag"] span { color: #FFFFFF !important; }
+span[data-baseweb="tag"] span { color: #1E2D3E !important; }
 
 /* Dropdown options */
 li[role="option"] {
-    color: #FFFFFF !important;
+    color: #1E2D3E !important;
     background-color: #162130 !important;
 }
 li[role="option"]:hover { background-color: #1E2D3E !important; }
@@ -725,7 +725,7 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
-        number={'suffix': '%', 'font': {'size': 28, 'color': '#FFFFFF', 'family': 'Rajdhani'}},
+        number={'suffix': '%', 'font': {'size': 28, 'color': '#1E2D3E', 'family': 'Rajdhani'}},
         title={'text': (
             f"<span style='font-size:0.82em;font-family:Rajdhani,sans-serif;"
             f"color:#C5D3DE;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"
@@ -749,7 +749,7 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
     fig.update_layout(
         height=210, margin=dict(l=15, r=15, t=55, b=10),
         paper_bgcolor='#162130', plot_bgcolor='#162130',
-        font={'color': '#FFFFFF'},
+        font={'color': '#1E2D3E'},
     )
     return fig
 
@@ -1022,7 +1022,7 @@ def main():
                     ec = '#00C853' if estilo == 'OFENSIVO' else '#E53935' if estilo == 'DEFENSIVO' else '#FFB300'
                     st.markdown(
                         f"<div class='match-card'>"
-                        f"<h3 style='margin:0 0 0.5rem;font-family:Rajdhani,sans-serif;color:#FFFFFF;'>{name}</h3>"
+                        f"<h3 style='margin:0 0 0.5rem;font-family:Rajdhani,sans-serif;color:#1E2D3E;'>{name}</h3>"
                         f"<span style='background:rgba(0,0,0,0.3);border:1px solid {ec};"
                         f"color:{ec};font-family:Rajdhani;font-size:0.75rem;letter-spacing:0.07em;"
                         f"padding:2px 10px;border-radius:20px;text-transform:uppercase;'>{estilo}</span>"
