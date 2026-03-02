@@ -29,15 +29,15 @@ st.markdown("""
 /*
   PALETA:
   Fundo principal  : #0F1923
-  Superfície       : #162130
+  Superficie       : #162130
   Card             : #1E2D3E
   Borda            : #2C3E52
-  Verde primário   : #00C853
+  Verde primario   : #00C853
   Dourado          : #FFB300
   Vermelho         : #E53935
   Texto principal  : #FFFFFF
-  Texto secundário : #C5D3DE
-  Texto terciário  : #8FA3B1
+  Texto secundario : #C5D3DE
+  Texto terciario  : #8FA3B1
 */
 
 html, body, [class*="css"] {
@@ -130,7 +130,7 @@ section[data-testid="stSidebar"] .stTextInput > div > div > input {
     color: #FFFFFF !important;
 }
 
-/* ── Títulos ── */
+/* ── Titulos ── */
 h1 {
     font-family: 'Rajdhani', sans-serif !important;
     font-weight: 700 !important;
@@ -181,7 +181,7 @@ h3 {
     border-radius: 4px 4px 0 0;
 }
 
-/* ── Botão Principal ── */
+/* ── Botao Principal ── */
 .stButton > button {
     font-family: 'Rajdhani', sans-serif !important;
     font-weight: 700;
@@ -213,7 +213,7 @@ section[data-testid="stSidebar"] .stButton > button:hover {
     transform: none !important;
 }
 
-/* ── Inputs área principal ── */
+/* ── Inputs area principal ── */
 .stSelectbox > div > div,
 .stMultiSelect > div > div {
     background-color: #162130 !important;
@@ -236,7 +236,7 @@ section[data-testid="stSidebar"] .stButton > button:hover {
 input { color: #FFFFFF !important; }
 input::placeholder { color: #8FA3B1 !important; }
 
-/* ── Métricas ── */
+/* ── Metricas ── */
 [data-testid="stMetric"] {
     background-color: #162130;
     border: 1px solid #2C3E52;
@@ -307,7 +307,7 @@ tbody tr:nth-child(odd)  { background-color: #1A2636 !important; }
 tbody tr:hover           { background-color: #263547 !important; }
 tbody td                 { color: #FFFFFF !important; }
 
-/* ── Barra de Progresso ── */
+/* ── Progress Bar ── */
 .stProgress > div > div > div > div {
     background-color: #00C853 !important;
     border-radius: 4px !important;
@@ -317,7 +317,7 @@ tbody td                 { color: #FFFFFF !important; }
     border-radius: 4px !important;
 }
 
-/* ── Botão de Download ── */
+/* ── Download Button ── */
 .stDownloadButton > button {
     font-family: 'Rajdhani', sans-serif !important;
     font-weight: 700 !important;
@@ -463,13 +463,13 @@ def get_second_half_goals(match):
 @st.cache_data(ttl=3600)
 def fetch_football_data(endpoint):
     if FOOTBALL_DATA_API_KEY == "DEFAULT_KEY":
-        st.error("Chave FOOTBALL_DATA_API_KEY não configurada.")
+        st.error("Chave FOOTBALL_DATA_API_KEY nao configurada.")
         return None
     try:
         url = f"{BASE_URL_FOOTBALL}/{endpoint}"
         response = requests.get(url, headers=HEADERS_FOOTBALL, timeout=15)
         if response.status_code == 429:
-            st.error("Limite de requisições da API atingido. Tente mais tarde.")
+            st.error("Limite de requisicoes da API atingido. Tente mais tarde.")
             return None
         return response.json() if response.status_code == 200 else None
     except Exception:
@@ -646,22 +646,22 @@ class AnalisadorAutomatico:
             lines.append("**Confronto**: Estilos diferentes — Jogo equilibrado")
         if hp['ataque'] >= 8: lines.append(f"{home_team} tem ataque muito forte")
         if ap['ataque'] >= 8: lines.append(f"{away_team} tem ataque muito forte")
-        if hp['defesa'] <= 5: lines.append(f"{home_team} tem defesa vulnerável")
-        if ap['defesa'] <= 5: lines.append(f"{away_team} tem defesa vulnerável")
+        if hp['defesa'] <= 5: lines.append(f"{home_team} tem defesa vulneravel")
+        if ap['defesa'] <= 5: lines.append(f"{away_team} tem defesa vulneravel")
         return lines
 
     def gerar_recomendacao(self, pb, po25, po15, pu35, pu25, ps, selected_markets):
         recs = []
         if 'btts' in selected_markets:
             if pb >= 60:   recs.append("**BTTS**: FORTE candidato — Probabilidade alta")
-            elif pb >= 50: recs.append("**BTTS**: Candidato moderado — Vale a análise")
+            elif pb >= 50: recs.append("**BTTS**: Candidato moderado — Vale a analise")
             else:          recs.append("**BTTS**: Probabilidade baixa — Melhor evitar")
         if 'over25' in selected_markets:
             if po25 >= 60:   recs.append("**Over 2.5**: FORTE candidato — Alta chance de gols")
             elif po25 >= 50: recs.append("**Over 2.5**: Candidato moderado — Boa oportunidade")
             else:            recs.append("**Over 2.5**: Probabilidade baixa")
         if 'over15' in selected_markets:
-            if po15 >= 80:   recs.append("**Over 1.5**: FORTE candidato — Muito provável")
+            if po15 >= 80:   recs.append("**Over 1.5**: FORTE candidato — Muito provavel")
             elif po15 >= 70: recs.append("**Over 1.5**: Candidato moderado")
             else:            recs.append("**Over 1.5**: Probabilidade moderada")
         if 'under35' in selected_markets:
@@ -673,14 +673,14 @@ class AnalisadorAutomatico:
             elif pu25 >= 50: recs.append("**Under 2.5**: Candidato moderado")
             else:            recs.append("**Under 2.5**: Probabilidade baixa")
         if 'second_half_more' in selected_markets:
-            if ps >= 60:   recs.append("**2º Tempo Mais Gols**: FORTE candidato")
-            elif ps >= 50: recs.append("**2º Tempo Mais Gols**: Candidato moderado")
-            else:          recs.append("**2º Tempo Mais Gols**: Probabilidade baixa")
+            if ps >= 60:   recs.append("**2nd Half More Goals**: FORTE candidato")
+            elif ps >= 50: recs.append("**2nd Half More Goals**: Candidato moderado")
+            else:          recs.append("**2nd Half More Goals**: Probabilidade baixa")
         return recs
 
     def send_alert(self, match_info, analise, email_to):
         if not EMAIL_USER or not EMAIL_PASS:
-            st.warning("Configure EMAIL_USER e EMAIL_PASS no arquivo .env.")
+            st.warning("Configure EMAIL_USER e EMAIL_PASS no .env.")
             return
         try:
             msg = MimeMultipart()
@@ -699,13 +699,13 @@ class AnalisadorAutomatico:
             s.sendmail(EMAIL_USER, email_to, msg.as_string()); s.quit()
             st.success("Alerta enviado com sucesso.")
         except Exception as e:
-            st.error(f"Erro no e-mail: {e}")
+            st.error(f"Erro no email: {e}")
 
     def gerar_relatorio_pdf(self, analises):
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=12)
-        pdf.cell(200, 10, txt="Relatório de Análises", ln=1, align='C')
+        pdf.cell(200, 10, txt="Relatorio de Analises", ln=1, align='C')
         pdf.ln(10)
         for a in analises[-10:]:
             pdf.cell(200, 10, txt=f"{a['home']} vs {a['away']}", ln=1)
@@ -725,17 +725,19 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
-        number={'suffix': '%', 'font': {'size': 28, 'color': '#FFFFFF', 'family': 'Rajdhani'}},
+        number={'suffix': '%', 'font': {'size': 22, 'color': '#FFFFFF', 'family': 'Rajdhani'}},
         title={'text': (
-            f"<span style='font-size:0.82em;font-family:Rajdhani,sans-serif;"
-            f"color:#C5D3DE;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"
+            f"<span style='font-size:0.85em;font-family:Rajdhani,sans-serif;"
+            f"color:#FFFFFF;letter-spacing:0.05em;text-transform:uppercase'>{title}</span>"
         )},
         domain={'x': [0, 1], 'y': [0, 1]},
         gauge={
             'shape': "angular",
             'axis': {'range': [None, max_value], 'tickwidth': 1, 'tickcolor': "#2C3E52",
-                     'tickfont': {'color': '#C5D3DE', 'size': 10}},
-            'bar': {'color': bar_color, 'thickness': 0.3},
+                     'tickfont': {'color': '#FFFFFF', 'size': 9}, 
+                     'tickmode': 'array',  # Forçar exibição dos ticks
+                     'tickvals': [0, 20, 40, 60, 80, 100]},  # Valores explícitos para garantir visibilidade
+            'bar': {'color': bar_color, 'thickness': 0.25},  # Reduzido um pouco a espessura
             'bgcolor': "#1E2D3E",
             'borderwidth': 0,
             'steps': [
@@ -743,16 +745,17 @@ def create_gauge_chart(value, title, target_prob, max_value=100):
                 {'range': [target_prob - 10, target_prob], 'color': 'rgba(255,179,0,0.10)'},
                 {'range': [target_prob, max_value], 'color': step_high}
             ],
-            'threshold': {'line': {'color': bar_color, 'width': 3}, 'thickness': 0.85, 'value': value}
+            'threshold': {'line': {'color': bar_color, 'width': 2}, 'thickness': 0.8, 'value': value}
         }
     ))
     fig.update_layout(
-        height=210, margin=dict(l=15, r=15, t=55, b=10),
-        paper_bgcolor='#162130', plot_bgcolor='#162130',
+        height=160,  # Reduzido significativamente
+        margin=dict(l=5, r=5, t=40, b=5),  # Margens mínimas
+        paper_bgcolor='#162130', 
+        plot_bgcolor='#162130',
         font={'color': '#FFFFFF'},
     )
     return fig
-
 # --- 6. INTERFACE PRINCIPAL ---
 def main():
     for key, val in [('last_analise', None), ('last_match', None), ('selected_comp_name', None)]:
@@ -764,7 +767,7 @@ def main():
 
     if not competitions:
         if FOOTBALL_DATA_API_KEY != "DEFAULT_KEY":
-            st.error("Não foi possível carregar as competições. Verifique sua FOOTBALL_DATA_API_KEY.")
+            st.error("Nao foi possivel carregar as competicoes. Verifique sua FOOTBALL_DATA_API_KEY.")
         return
 
     if st.session_state['selected_comp_name'] not in competitions:
@@ -775,7 +778,7 @@ def main():
     st.markdown(
         "<p style='font-family:Barlow,sans-serif;color:#C5D3DE;font-size:0.95rem;"
         "margin-top:-0.5rem;margin-bottom:1rem;'>"
-        "Análise automática · Dados reais · H2H · Odds ao vivo · Value Bets</p>",
+        "Analise automatica · Dados reais · H2H · Odds live · Value Bets</p>",
         unsafe_allow_html=True
     )
 
@@ -783,15 +786,15 @@ def main():
     odds_ok     = ODDS_API_KEY != "sua_chave_the_odds_api"
     st.markdown(
         f"<div class='api-status'>"
-        f"Football API: <strong>{'OK — ' + FOOTBALL_DATA_API_KEY[:8] + '...' if football_ok else 'Não configurada'}</strong>"
+        f"Football API: <strong>{'OK — ' + FOOTBALL_DATA_API_KEY[:8] + '...' if football_ok else 'Nao configurada'}</strong>"
         f"&nbsp;&nbsp;|&nbsp;&nbsp;"
-        f"Odds API: <strong>{'Configurada' if odds_ok else 'Não configurada'}</strong>"
+        f"Odds API: <strong>{'Configurada' if odds_ok else 'Nao configurada'}</strong>"
         f"</div>",
         unsafe_allow_html=True
     )
 
     # Sidebar
-    st.sidebar.markdown("## Configurações")
+    st.sidebar.markdown("## Configuracoes")
     st.sidebar.markdown("---")
     st.sidebar.markdown("### Mercados Ativos")
 
@@ -801,7 +804,7 @@ def main():
         'over15':           'Over 1.5 Gols',
         'under35':          'Under 3.5 Gols',
         'under25':          'Under 2.5 Gols',
-        'second_half_more': 'Mais Gols 2º Tempo'
+        'second_half_more': 'Mais Gols 2 Tempo'
     }
     default_keys    = ['btts', 'over25', 'over15', 'under35', 'second_half_more']
     default_display = [market_map[k] for k in default_keys]
@@ -815,14 +818,14 @@ def main():
     selected_markets = [reverse_map[m] for m in selected_markets_display]
 
     risco_filter = st.sidebar.selectbox(
-        "Filtro de Recomendações",
+        "Filtro de Recomendacoes",
         ["Todos", "Value Bet (Odd Real > Odd Justa)", "Baixo Risco (Prob >70%)"]
     )
 
     st.sidebar.markdown("---")
 
     with st.sidebar.expander("Watchlist e Alertas"):
-        new_match = st.text_input("Partida (Casa vs Visitante)", key="new_match_input")
+        new_match = st.text_input("Partida (Home vs Away)", key="new_match_input")
         if st.button("Adicionar") and new_match:
             analisador.watchlist.append(new_match)
             st.session_state.watchlist = analisador.watchlist
@@ -841,7 +844,7 @@ def main():
             st.caption("Watchlist vazia.")
 
         st.markdown("---")
-        email_to = st.text_input("E-mail para Alertas", value="seu@email.com")
+        email_to = st.text_input("Email para Alertas", value="seu@email.com")
         if st.button("Enviar Alertas"):
             for match_str in analisador.watchlist:
                 try:
@@ -853,7 +856,7 @@ def main():
                     st.error(f"Erro: {e}")
 
     # Tabs
-    tab1, tab2, tab3 = st.tabs(["Análise de Partidas", "Perfis dos Times", "Histórico e Relatórios"])
+    tab1, tab2, tab3 = st.tabs(["Análise de Partidas", "Perfis dos Times", "Historico e Relatorios"])
 
     # ── Tab 1 ──
     with tab1:
@@ -862,7 +865,7 @@ def main():
         comp_col, match_col = st.columns([1, 2])
         with comp_col:
             selected_comp_name = st.selectbox(
-                "Competição:",
+                "Competicao:",
                 options=list(competitions.keys()),
                 key='comp_select',
                 index=list(competitions.keys()).index(st.session_state['selected_comp_name'])
@@ -900,7 +903,7 @@ def main():
                 selected_match = match_options[[m["display"] for m in match_options].index(sel_str)]
 
         if selected_match:
-            if st.button("Iniciar Análise Automática", use_container_width=True):
+            if st.button("Iniciar Analise Automatica", use_container_width=True):
                 with st.spinner(f"Analisando {selected_match['home_team']} vs {selected_match['away_team']}..."):
                     try:
                         analise = analisador.analisar_partida_automatica(
@@ -909,7 +912,7 @@ def main():
                         )
                         st.session_state['last_analise'] = analise
                         st.session_state['last_match']   = selected_match
-                        st.success("Análise concluída com sucesso.")
+                        st.success("Analise concluida com sucesso.")
                     except Exception as e:
                         st.error(f"Erro: {e}")
 
@@ -955,7 +958,7 @@ def main():
             detail_col, recomend_col = st.columns([2, 1])
 
             with detail_col:
-                st.markdown("### Análise Detalhada")
+                st.markdown("### Analise Detalhada")
                 for linha in analise['analise_detalhada']:
                     st.markdown(f"* {linha}")
 
@@ -981,12 +984,12 @@ def main():
                                 st.metric("EV", f"{value:.3f}" if value else "—", delta=delta)
 
             with recomend_col:
-                st.markdown("### Recomendações")
+                st.markdown("### Recomendacoes")
                 if analise['recomendacao']:
                     for rec in analise['recomendacao']:
                         st.success(rec)
                 else:
-                    st.info("Selecione mercados na barra lateral.")
+                    st.info("Selecione mercados na sidebar.")
 
                 st.markdown("---")
                 st.markdown("### Odds em Tempo Real")
@@ -1000,7 +1003,7 @@ def main():
                             u25 = next((o['price'] for o in mt['outcomes'] if o.get('point') == 2.5 and o.get('name') == 'Under'), 'N/A')
                             st.text(f"Over 2.5: @{o25} | Under 2.5: @{u25}")
                 else:
-                    st.info("Odds API não configurada.")
+                    st.info("Odds API nao configurada.")
 
     # ── Tab 2 ──
     with tab2:
@@ -1037,32 +1040,32 @@ def main():
                     m2.metric("Over 2.5", f"{profile['over25']}%")
                     m3, m4 = st.columns(2)
                     m3.metric("Over 1.5", f"{profile['over15']}%")
-                    m4.metric("2º Tempo+", f"{profile['second_half_more']}%")
+                    m4.metric("2 Tempo+", f"{profile['second_half_more']}%")
 
             render_profile(home_col, st.session_state['last_match']['home_team'], hp)
             render_profile(away_col, st.session_state['last_match']['away_team'], ap)
         else:
-            st.info("Analise uma partida primeiro na aba Análise de Partidas.")
+            st.info("Analise uma partida primeiro na aba Analise de Partidas.")
 
     # ── Tab 3 ──
     with tab3:
-        st.markdown("## Histórico de Análises")
+        st.markdown("## Historico de Analises")
         if analisador.historico_analises:
             df = pd.DataFrame(analisador.historico_analises)
-            df['Prob Média'] = ((df['prob_btts'] + df['prob_over25']) / 2).round(1)
+            df['Prob Media'] = ((df['prob_btts'] + df['prob_over25']) / 2).round(1)
             st.dataframe(df.sort_values(by='data', ascending=False), use_container_width=True)
 
             st.markdown("---")
-            st.markdown("### Exportar Relatório")
+            st.markdown("### Exportar Relatorio")
             pdf_report = analisador.gerar_relatorio_pdf(analisador.historico_analises)
             st.download_button(
-                label="Baixar PDF — Últimas 10 Análises",
+                label="Baixar PDF — Ultimas 10 Analises",
                 data=pdf_report,
                 file_name="Relatorio_Analises_Futebol.pdf",
                 mime="application/pdf"
             )
         else:
-            st.info("Histórico vazio. Analise uma partida para ver os dados aqui.")
+            st.info("Historico vazio. Analise uma partida para ver os dados aqui.")
 
 if __name__ == "__main__":
     main()
