@@ -71,7 +71,7 @@ section[data-testid="stSidebar"] span { color: #FFFFFF !important; }
 section[data-testid="stSidebar"] label { color: #C5D3DE !important; }
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
-    color: #c70000 !important;
+    color: #FFFFFF !important;
     font-family: 'Rajdhani', sans-serif !important;
 }
 section[data-testid="stSidebar"] .stExpander {
@@ -90,7 +90,7 @@ section[data-testid="stSidebar"] .stSelectbox > div > div {
 }
 section[data-testid="stSidebar"] .stMultiSelect > div > div:focus-within,
 section[data-testid="stSidebar"] .stSelectbox > div > div:focus-within {
-    border-color: #00C853 !important;
+    border-color: #01160a !important;
     box-shadow: 0 0 0 2px rgba(0,200,83,0.2) !important;
 }
 /* Dropdown popup — fundo preto, letras brancas */
