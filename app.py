@@ -42,7 +42,7 @@ st.markdown("""
 
 html, body, [class*="css"] {
     font-family: 'Barlow', sans-serif;
-    color: #000000;
+    color: #FFFFFF;
 }
 
 .stApp {
@@ -90,7 +90,7 @@ section[data-testid="stSidebar"] .stSelectbox > div > div {
 }
 section[data-testid="stSidebar"] .stMultiSelect > div > div:focus-within,
 section[data-testid="stSidebar"] .stSelectbox > div > div:focus-within {
-    border-color: #01160a !important;
+    border-color: #00C853 !important;
     box-shadow: 0 0 0 2px rgba(0,200,83,0.2) !important;
 }
 /* Dropdown popup — fundo preto, letras brancas */
@@ -122,12 +122,12 @@ span[data-baseweb="tag"] {
     border: 1px solid #2C3E52 !important;
     border-radius: 4px !important;
 }
-span[data-baseweb="tag"] span { color: #290303 !important; }
+span[data-baseweb="tag"] span { color: #FFFFFF !important; }
 section[data-testid="stSidebar"] .stTextInput > div > div > input {
     background-color: #162130 !important;
     border: 1px solid #2C3E52 !important;
     border-radius: 6px !important;
-    color: #030000 !important;
+    color: #FFFFFF !important;
 }
 
 /* ── Titulos ── */
@@ -410,11 +410,11 @@ hr {
 
 /* ── Multiselect tags ── */
 span[data-baseweb="tag"] {
-    background-color: rgba(0,200,83,0.18) !important;
+    background-color: #e0f2e0 !important;  /* Verde muito claro */
     border: 1px solid #00C853 !important;
     border-radius: 4px !important;
 }
-span[data-baseweb="tag"] span { color: #FFFFFF !important; }
+span[data-baseweb="tag"] span { color: #000000 !important; }  /* Texto preto */
 
 /* Dropdown options */
 li[role="option"] {
