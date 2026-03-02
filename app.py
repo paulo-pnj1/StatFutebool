@@ -42,7 +42,7 @@ st.markdown("""
 
 html, body, [class*="css"] {
     font-family: 'Barlow', sans-serif;
-    color: #FFFFFF;
+    color: #0e0101;
 }
 
 .stApp {
